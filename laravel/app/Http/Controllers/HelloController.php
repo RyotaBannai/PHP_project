@@ -16,7 +16,20 @@ class HelloController extends Controller
 {
   //アクションメソッドを定義
    public function index(){
-     //出力を戻り値に
-     return 'Hi wassup!';
+		$data = [
+			'msg'=> 'Hi wassup!'
+		];
+		return view('hello');
+	}
+
+	public function view(){
+
+		//viewに渡す変数をview変数という. 連想配列として準備
+		$data = [
+			'msg'=> 'Hi wassup!'
+		];
+		//viewメゾットでview呼び出し.
+		return view('hello.view', $data);
+		//hello.view -> /hello/view.blade.php が呼ばれる.
   }
 }
