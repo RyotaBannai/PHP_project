@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Book; //モデルクラスをインポート
 
 /*
 	クライアントからの要求を受け取ると、まずはルーティング機能を利用して
@@ -26,7 +27,7 @@ class HelloController extends Controller
 
 		//viewに渡す変数をview変数という. 連想配列として準備
 		$data = [
-			'msg'=> 'Hi wassup!'
+			'records' => Book::all(),
 		];
 		//viewメゾットでview呼び出し.
 		return view('hello.view', $data);
