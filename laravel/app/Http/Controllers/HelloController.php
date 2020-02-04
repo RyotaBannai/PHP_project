@@ -17,10 +17,14 @@ class HelloController extends Controller
 {
   //アクションメソッドを定義
    public function index(){
-		$data = [
-			'msg'=> 'Hi wassup!'
-		];
-		return view('hello');
+		return view('hello.index', [
+			'msg'=> 'Hi wassup!',
+			'html'=> '<i>HTMLエスケープの無効化{!!…!!}</i>',
+			'verbatim'=> '<i>{{…}}の無効化</i>',
+			'random'=> random_int(0,100),
+			'emptystring'=> '',
+			'null'=> null,
+		]);
 	}
 
 	public function view(){
