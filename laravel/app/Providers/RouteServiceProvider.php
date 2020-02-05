@@ -30,7 +30,8 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        //全ての{id}パラメータに大して以下の正規表現が適用される.
+        //Route::pattern('id', '[0-9][2,3]')
 
         parent::boot();
     }

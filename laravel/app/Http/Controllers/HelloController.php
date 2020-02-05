@@ -34,7 +34,7 @@ class HelloController extends Controller
 			'records' => Book::all(),
 		];
 		//viewメゾットでview呼び出し.
-		return view('hello.view', $data);
+		return view('subviews.list', $data);
 		//hello.view -> /hello/view.blade.php が呼ばれる.
   }
 }

@@ -35,7 +35,7 @@
       @php
         $i++;
       @endphp
-      <h{{$i}}><h{{$i}}>番目です.</h{{$i}}>
+      <h{{$i}}>h{{$i}}番目です.</h{{$i}}>
     @endwhile
     @foreach($hash as $id => $value)
       <ul>
