@@ -14,3 +14,11 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::prefix('ctrl')->group(function(){
+    Route::get('/plain', 'CtrlController@plain');
+    Route::get('/header', 'CtrlController@header');
+    Route::get('/outJson', 'CtrlController@outJson');
+    Route::get('/outCSV', 'CtrlController@outCSV');
+    Route::get('/redirectBasic', 'CtrlController@redirectBasic');
+});
