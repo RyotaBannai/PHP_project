@@ -8,7 +8,7 @@
   <body>
     <hr />
     @section("main")
-      <p>既定のコンテンツです.</p>
+      <p>既定のコンテンツ.</p>
     @show
     <hr />
   </body>

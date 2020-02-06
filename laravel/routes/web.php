@@ -14,5 +14,10 @@
 Route::get('/', function () {
     return view('welcome');
 });
-
-Route::get('/state', 'StateController@index');
+Route::group(['prefix'=>'state'], function(){
+	Route::get('/', 'StateController@index');
+	Route::post('/check', 'StateController@check');
+	Route::get('/form', 'StateController@form');
+	Route::get('/session', 'StateController@session');
+	Route::get('/success', 'StateController@success');
+});
