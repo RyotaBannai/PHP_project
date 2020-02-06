@@ -6,10 +6,18 @@ use Illuminate\Http\Request;
 
 class CtrlController extends Controller
 {   
+	public function __construct(){
+		//クラス内でmiddlewareを定義.
+		$this->middleware(function($request, $next){
+			return $next($request);
+		});
+		// })->only(['basic', 'form']); 
+		// only: 適用したいアクションのみ. <-> except
+	}
     //Request : クライアントから送信された情報にアクセスするための手段.
     /*引数として渡すか, request()で直接使う.
     */
-    public function index(Request $req){
+    public function index(Request $req){ //メソッドインジェクション
     // public function index(Request $req, $id) 
     // Request オブジェクトとルートパラメータを使いたい場合.
     //=> Request オブジェとの後方にルートパラメータを追加.

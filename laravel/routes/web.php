@@ -11,13 +11,24 @@
 |
 */
 
+//middlewareを使用する場合, 初めにuseで呼び出す.
+use App\Http\Middleware\LogMiddleware;
+
 Route::get('/', function () {
     return view('welcome');
 });
 
 Route::prefix('ctrl')->group(function(){
+    
+    // group middlewareを定義.
     Route::get('/', 'CtrlController@index');
-    Route::any('/form', 'CtrlController@form');
+        Route::group(['middleware'=>['debug']], function(){Route::any('/form', 'CtrlController@form');
+    });
+    //->middleware(LogMiddleware::class);
+    
+    // 複数のmiddleware登録したい場合はコンマで区切る.
+    // ->middleware(LogMiddleware::class, MergeViewsvalsMiddleware::class);
+
     Route::get('/header', 'CtrlController@header');
     Route::get('/outJson', 'CtrlController@outJson');
     Route::get('/outCSV', 'CtrlController@outCSV');
