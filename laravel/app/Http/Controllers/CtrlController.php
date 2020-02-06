@@ -5,7 +5,23 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 class CtrlController extends Controller
-{
+{   
+    //Request : クライアントから送信された情報にアクセスするための手段.
+    /*引数として渡すか, request()で直接使う.
+    */
+    public function index(Request $req){
+    // public function index(Request $req, $id) 
+    // Request オブジェクトとルートパラメータを使いたい場合.
+    //=> Request オブジェとの後方にルートパラメータを追加.
+
+        return 'リクエストパス: '.$req->path();
+    }
+    /*
+    public function index(){
+        return 'リクエストパス: '.request()->path();
+    }
+    */
+
     public function plain(){
         return response('Hello', 200)->header('Content-Type', 'text/plain');
         //response architect text, status, headers
@@ -61,5 +77,16 @@ class CtrlController extends Controller
         //return redirect()->action('CtrlController@outJson', ['id'=>10]);
 
         //return redirect()->away('other web page url');
+    }
+
+    public function form(){
+      return view('ctrl.form', [
+        //'result'=>request()->nameval, 
+				/*入力フォームに応じてRequestオブジェクトに「動的に付与されるプロパティ」のことを         「動的プロパティ」という.*/
+
+				//もし既定値を設定したい場合は, inputを使用.
+				//既定値とカラ要素送信は別.
+				'result'=>request()->input('nameval', 'visitor')
+        ]);
     }
 }

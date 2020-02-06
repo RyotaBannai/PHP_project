@@ -16,9 +16,11 @@ Route::get('/', function () {
 });
 
 Route::prefix('ctrl')->group(function(){
-    Route::get('/plain', 'CtrlController@plain');
+    Route::get('/', 'CtrlController@index');
+    Route::any('/form', 'CtrlController@form');
     Route::get('/header', 'CtrlController@header');
     Route::get('/outJson', 'CtrlController@outJson');
     Route::get('/outCSV', 'CtrlController@outCSV');
+    Route::get('/plain', 'CtrlController@plain');
     Route::get('/redirectBasic', 'CtrlController@redirectBasic');
 });
