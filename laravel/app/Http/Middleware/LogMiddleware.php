@@ -33,7 +33,7 @@ class LogMiddleware
     */
     public function handle($request, Closure $next)
     {
-        file_put_contents('/Users/ryota/Documents/access.log',date('Y-m-d H:i:s')."\n", FILE_APPEND);
+        file_put_contents('/Users/ryota/Documents/access.log', date('Y-m-d H:i:s')."\n", FILE_APPEND);
 
         $response = $next($request);
 

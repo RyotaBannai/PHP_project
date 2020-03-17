@@ -90,11 +90,14 @@ class CtrlController extends Controller
     public function form(){
       return view('ctrl.form', [
         //'result'=>request()->nameval, 
-				/*入力フォームに応じてRequestオブジェクトに「動的に付与されるプロパティ」のことを         「動的プロパティ」という.*/
+                /* 
+                 入力フォームに応じてRequestオブジェクトに「動的に付与されるプロパティ」のことを 
+                「動的プロパティ」という.
+                */
 
 				//もし既定値を設定したい場合は, inputを使用.
 				//既定値とカラ要素送信は別.
-				'result'=>request()->input('nameval', 'visitor')
+				'result' => request()->input('nameval', 'visitor')
         ]);
     }
 }

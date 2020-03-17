@@ -22,7 +22,8 @@ Route::prefix('ctrl')->group(function(){
     
     // group middlewareを定義.
     Route::get('/', 'CtrlController@index');
-        Route::group(['middleware'=>['debug']], function(){Route::any('/form', 'CtrlController@form');
+        Route::group(['middleware'=>['debug']], function(){
+            Route::any('/form', 'CtrlController@form');
     });
     //->middleware(LogMiddleware::class);
     
