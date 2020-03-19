@@ -5,7 +5,7 @@
 @csrf
   <label for="name">Name: </label>
   <input id="name" name="nameval" type="text" />
-  <input type="submit" valye="submit" />
+  <input type="submit" valye="Submit" />
   <p>Hello, 
   @if($result)
     {{ $result }}!

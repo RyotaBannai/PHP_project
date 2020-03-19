@@ -17,7 +17,7 @@ class LogMiddleware
     // public function handle($request, Closure $next)
     // {
     //     /*ビュー変数の追加.
-    //         $request>merge([
+    //         $request->merge([
     //             'title'=>'速習Laravel',
     //             'author'=>'YAMADA,Yoshihiro'
     //             ]);

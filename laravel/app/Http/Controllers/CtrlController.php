@@ -17,10 +17,11 @@ class CtrlController extends Controller
     //Request : クライアントから送信された情報にアクセスするための手段.
     /*引数として渡すか, request()で直接使う.
     */
-    public function index(Request $req){ //メソッドインジェクション
-    // public function index(Request $req, $id) 
-    // Request オブジェクトとルートパラメータを使いたい場合.
-    //=> Request オブジェとの後方にルートパラメータを追加.
+    public function index(Request $req){ 
+        // メソッドインジェクション
+        // public function index(Request $req, $id) 
+        // Request オブジェクトとルートパラメータを使いたい場合.
+        // => Request オブジェとの後方にルートパラメータを追加.
 
         return 'リクエストパス: '.$req->path();
     }
@@ -31,8 +32,9 @@ class CtrlController extends Controller
     */
 
     public function plain(){
+        // return 'hello world!!';
         return response('Hello', 200)->header('Content-Type', 'text/plain');
-        //response architect text, status, headers
+        // response architect text, status, headers
     }
 
     public function header(){
@@ -46,14 +48,15 @@ class CtrlController extends Controller
             ...
         ])*/
     }
-    public function outJson(){
+    public function outJson(Request $request){
         return response()
         ->json([
             'name'=>'Yoshihiro, YAMADA',
             'sex'=>'male',
             'age'=>18,
+            'id'=>$request->input('id')
         ]);
-        //->withCallback('callback'); // for json-p
+        # ->withCallback('callback'); // for json-p
     }
     
     //ファイルをダウンロードする.
@@ -78,7 +81,7 @@ class CtrlController extends Controller
 
     public function redirectBasic(){
         //return redirect('ctrl.outJson'); // path name
-        return redirect()->route('outJson'); // route name
+        return redirect()->route('outJson', ['id'=>0000]); // route name
 
         //return redirect()->route('outJson', ['id'=>10]); // route name with param
 

@@ -31,7 +31,7 @@ Route::prefix('ctrl')->group(function(){
     // ->middleware(LogMiddleware::class, MergeViewsvalsMiddleware::class);
 
     Route::get('/header', 'CtrlController@header');
-    Route::get('/outJson', 'CtrlController@outJson');
+    Route::get('/outJson', 'CtrlController@outJson')->name('outJson');
     Route::get('/outCSV', 'CtrlController@outCSV');
     Route::get('/plain', 'CtrlController@plain');
     Route::get('/redirectBasic', 'CtrlController@redirectBasic');
