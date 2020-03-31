@@ -40,3 +40,8 @@ EOI;
 }
 $ndt = new NowDocTest();
 echo $ndt->Doc2;
+
+// echo は自動的に文字列型へキャストする
+// 明示的に小数点以下を出力した場合は,
+// printfなどの「出力整形関数」を使う.
+printf('%.1f', 15.0);
