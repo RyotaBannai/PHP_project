@@ -30,6 +30,10 @@ class Employee{
     public static function give_u_myself(){
         return new self('anonymous', self::REGULAR);
     }
+
+    public function return_myself(){
+        return $this;
+    }
 }
 
 $myemployee = new Employee('Bannai', Employee::REGULAR);
@@ -61,3 +65,6 @@ echo $gotu::$age, ' ',$gotu->name, PHP_EOL;
 
 // クラス定数にアクセス
 echo Employee::REGULAR, PHP_EOL;
+
+// $thisで自分を返して、tyescriptみたいなメソッドチェーンみたいなのもできる.
+var_dump($myemployee->return_myself()->return_myself()->return_myself());
