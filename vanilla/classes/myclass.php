@@ -19,7 +19,7 @@ class Employee{
     public function work()
     {
         // this はインスタンスオブジェクとが自分自身を参照するためのキーワード
-        echo 'i\'m '.$this->state.'ing.', PHP_EOL;
+        echo 'I\'m '.$this->state.'ing.', PHP_EOL;
     }
 
     public function refurn_static_val(){
