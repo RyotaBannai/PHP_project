@@ -54,6 +54,7 @@ class Configure implements Reader, Writer{
 }
 
 //定義済みインターフェース iterator を実装.
+// https://www.php.net/manual/ja/reserved.interfaces.php
 class myIterator implements Iterator{
     private $position = 0;
     private $array = array();
