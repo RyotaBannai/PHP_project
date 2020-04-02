@@ -33,11 +33,10 @@ function read_image_metadata(string $filename)
 
     // exif_imagetype で画像以外のファイルを渡したり、
     // exif_read_data でjpegじゃないファイルを渡すとエラーになったり...
-    function on_error($severity, $message) {
+
+    set_error_handler(function($severity, $message) {
         throw new \RuntimeException($message);
-        // throw new \RuntimeException(error_get_last()['message']);
-    };
-    set_error_handler('on_error');
+    });
 
     try{
         $type = exif_imagetype($filename);
@@ -45,13 +44,11 @@ function read_image_metadata(string $filename)
             return [];
         }
         # exif_read_data — Reads the EXIF headers from an image file
-        return exif_read_data($filename);
-    } finally{
-        restore_error_handler();
-        // set_error_handlerはスタッカブルであるため，
-        // リストアするとちゃんと直前に設定されていたエラーハンドラに戻してくれる
+        returnexif_read_data($filename);
     }
-
+    finally{
+        restore_error_handler();
+    }
 }
 
 # CLIで実行した場合に読み込まれるようにする。python の __name__ == __main__ のような物.
