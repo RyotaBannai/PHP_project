@@ -16,6 +16,17 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::prefix('redis')->group(function(){
+    // regex もしあればwhereでヒットするurl
+    Route::get('{anything?}', 'SampleRedisController@set')->where('anything', 'set');
+    Route::get('get', 'SampleRedisController@get');
+});
+
+#Route::get('redis/', 'SampleRedisController@set');
+#Route::get('/redis', function () {
+#    return view('welcome');
+#});
+
 Route::get('/testCache', function() {
     Cache::put('name', 'aaa',100);
 

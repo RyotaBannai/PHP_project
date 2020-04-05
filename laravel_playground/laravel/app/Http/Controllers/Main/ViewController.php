@@ -12,9 +12,10 @@ class ViewController extends Controller
 			'msg' => 'Hi!',
 		]);
 	}
-public function comp(){
-	return view('view.comp', [
-		'msg' => 'Hi!',
+
+    public function comp(){
+	    return view('view.comp', [
+		    'msg' => 'Hi!',
 		]);
-	}	
+	}
 }
