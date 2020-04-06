@@ -28,6 +28,9 @@ class SampleRedisController
             'data'=> $data->name,
         ]);
     }
+    public function zrange(){
+
+    }
 
     public function get(){
         $this->id=1;
