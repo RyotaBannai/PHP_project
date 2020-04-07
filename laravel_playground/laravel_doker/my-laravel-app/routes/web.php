@@ -19,6 +19,7 @@ Route::get('/', function () {
 Route::prefix('redis')->group(function(){
     // regex もしあればwhereでヒットするurl
     Route::get('{anything?}', 'RedisController@set')->where('anything', 'set');
+    // Route::match(['/','set'], ',', function(){}); のように書くこともできる.
     Route::get('get', 'RedisController@get');
 });
 

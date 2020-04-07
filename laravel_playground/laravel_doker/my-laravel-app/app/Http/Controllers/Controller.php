@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+# TODO: ここらのサービスを一通り理解！
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
