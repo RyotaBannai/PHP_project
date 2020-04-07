@@ -11,11 +11,15 @@ class UtilServiceProvider extends ServiceProvider
      *
      * @return void
      */
+
+    protected $defer = true;
+
     public function register()
     {
+
         // $this->app はサービスコンテナ
         // 第一引数にキー名（util）、第二引数にクラス名（MyUtil）入れて紐付けして登録
-        $this->app->singleton('util', 'App\Services\MyUtil'); // 結合処理（バインド）はサービスプロバイダーに記述.
+        $this->app->bind('util', 'App\Services\MyUtil'); // 結合処理（バインド）はサービスプロバイダーに記述.
     }
 
     /**
@@ -32,5 +36,18 @@ class UtilServiceProvider extends ServiceProvider
          *
          * */
         //
+    }
+
+    /**
+     * Get the services provided by the provider.
+     *
+     * @return array
+     */
+    public function provides()
+    {
+        // $defer = trueの際は必ず定義が必要
+        // $this->app->deferredServicesプロパティにRiak\Connectionのインスタンス生成ルールは
+        // App\Providers\RiakServiceProviderに定義されていることを保存
+        return ['util'];
     }
 }

@@ -24,7 +24,10 @@ Route::get('/', function () {
 
 Route::get('/util', function(MyUtil $util){ // 無名関数でサービスの呼び出し
     #return $util->getMessage(); // サービスのメソッドをコール
-    return app()->make('util')->getMessage();
+    return app()->make('util')->getMessage();// コンテナがインスタンスを作成
+    # return app('util')->getMessage(); // これでもok
+    # app()->call( 'MyController@show' ); //static メソッドのように呼び脱すこともできる.
+    # app()->call( 'MyController@show', ['id'=> $id] ); // 引数で渡したい場合
 });
 
 Route::prefix('redis')->group(function(){

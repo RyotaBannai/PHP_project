@@ -97,3 +97,51 @@ $this->app->make('sender');
 - this is a good one to understand what provider bind for. https://code.tutsplus.com/tutorials/how-to-register-use-laravel-service-providers--cms-28966
 - https://stackoverflow.com/questions/31685073/laravel-5-1-service-container-binding-using-something-other-than-the-class-name
 - https://reffect.co.jp/laravel/laravel-service-provider-understand
+- この説明がすごいわかりやすい. https://qiita.com/dublog/items/3314ca25a90e76f63b17
+```php
+# ex.1
+class Walk 
+{
+    private $dog;
+    public function __construct()
+    {
+        $this->dog = new Dog();
+    }
+}
+# ex.2
+class Walk
+{
+    private $dog;
+    public function __construct(Dog $dog){
+        $this->dog = $dog;
+    }
+}
+```
+- 違いはコンストラクタ内でnewを使っているか、コンストラクタの引数にDog型の引数を渡しているか。
+- この違いはWalk(散歩クラス)のDogへの依存度に差を生む。
+- ex.1はDogクラスの犬しか散歩させることがで機内が、ex.2はDogだけでなくDogクラスを継承したLabやDachshundをインスタンス生成時に指定することでWalkクラスを用いて散歩させることができる。つまり、**Walkクラスの操作対象がDogに限定されていたものが、外部から指定可能になった。**これが依存度が下がったという意味である。これを「依存を外部から注入する」と言う理由の仕組みである.
+- サービスプロバイダでコードを管理することで良いこと：
+    1. テスト時にはアプリケーションコードで生成されるインスタンスをテスト用にすり替えるといったことができる
+    2. あるインスタンスはアプリケーション実行プロセスで一つだけ（シングルトン）にしたいので、2回目の生成時には前回生成したインスタンスを返す
+- 確かにこれが連鎖的に発生してしまう可能性はあり：
+```php
+class AppServiceProvider extends ServiceProvider
+{
+    public function register()
+    {
+        $this->app->bind(UserController::class, function($app) {
+            return new \App\Http\Controllers\UserController($app->make(UserRegistry::class)); // ここが連鎖になる可能性あり
+        });
+    }
+}
+```
+- 参照 https://qiita.com/kunit/items/adee0a6aa449d53602c0
+- https://qiita.com/kd9951/items/2328e2f8add9037bd990
+- Contextual binding with service provider:
+- https://stackoverflow.com/questions/52777570/laravel-5-how-to-use-this-app-when
+```php
+$this->app->extend(Service::class, function($service) {
+    return new DecoratedService($service);
+});
+```
+- this is like the same implementation of Python's decorator.
