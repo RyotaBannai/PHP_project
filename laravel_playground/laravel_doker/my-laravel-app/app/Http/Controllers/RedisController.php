@@ -2,10 +2,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use DB; // DBファサード
+use DB; //DBファサード
 use Redis; //Redisファサード // config/app.php にalias ある
 
-class SampleRedisController
+class RedisController
 {
     protected $table;
     protected $id;

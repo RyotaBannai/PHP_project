@@ -18,8 +18,8 @@ Route::get('/', function () {
 });
 Route::prefix('redis')->group(function(){
     // regex もしあればwhereでヒットするurl
-    Route::get('{anything?}', 'SampleRedisController@set')->where('anything', 'set');
-    Route::get('get', 'SampleRedisController@get');
+    Route::get('{anything?}', 'RedisController@set')->where('anything', 'set');
+    Route::get('get', 'RedisController@get');
 });
 
 #Route::get('redis/', 'SampleRedisController@set');
