@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 
+// プロバイダーで利用できるようになったサービスを利用
+use App\Services\MyUtil; // サービス（Utilクラス）のエイリアスを作成
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,9 +16,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+$encrypt = app()->make('encrypter');
+
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/util', function(MyUtil $util){ // 無名関数でサービスの呼び出し
+    #return $util->getMessage(); // サービスのメソッドをコール
+    return app()->make('util')->getMessage();
+});
+
 Route::prefix('redis')->group(function(){
     // regex もしあればwhereでヒットするurl
     Route::get('{anything?}', 'RedisController@set')->where('anything', 'set');

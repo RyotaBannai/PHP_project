@@ -86,4 +86,14 @@ $this->app->make('sender');
 - サービスコンテナ（$this->app）からキー名（sender）に対応するクラスを生成.
 - このケースでは MailSender のインスタンスが返ってくる. リゾルブ完結.
 - 参照 https://laraweb.net/practice/2029/
-
+### サービスプロバイダー = Laravelはサービス毎に初期処理を定義し、実行する仕組みを持っており、この初期処理の実装を行うクラスのこと
+- サービスコンテナのbindの処理を請け負う.
+- サービスプロバイダーが行うことは３つ:
+    1. サービスコンテナへのバインド
+    2. イベントリスナーやミドルウェア、ルーティングの登録
+    3. 外部コンポーネントを組み込む
+- まずは次のコマンドでサービスプロバイダーを作成する. `php artisan make:provider UtilServiceProvier` これで app\Providers 配下に新しいプロバイダーが作成される.
+- サービスプロバイダーをconfig/app.phpに登録.
+- this is a good one to understand what provider bind for. https://code.tutsplus.com/tutorials/how-to-register-use-laravel-service-providers--cms-28966
+- https://stackoverflow.com/questions/31685073/laravel-5-1-service-container-binding-using-something-other-than-the-class-name
+- https://reffect.co.jp/laravel/laravel-service-provider-understand
