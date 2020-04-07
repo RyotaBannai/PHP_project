@@ -23,6 +23,10 @@ Route::prefix('redis')->group(function(){
     Route::get('get', 'RedisController@get');
 });
 
+Route::prefix('practice')->group(function(){
+    Route::get('servicecontainer', 'ServiceContainerController@index');
+});
+
 #Route::get('redis/', 'SampleRedisController@set');
 #Route::get('/redis', function () {
 #    return view('welcome');
