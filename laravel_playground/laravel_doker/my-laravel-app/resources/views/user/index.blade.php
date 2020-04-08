@@ -1,3 +1,3 @@
 @foreach ($users as $user)
-    {{$user->getData()}}<br>
+    {{$user}}<br>
 @endforeach
