@@ -173,7 +173,7 @@ $this->app->extend(Service::class, function($service) {
 ### 共通関数・汎用関数：ファサードまでは大袈裟にやりたくないが、同じ処理を複数の関数で使いまわしたい場合に利用.
 - 共通関数を作成する手順:
 1. `app\Library`に作成したいクラスを作成. 無ければ作成.　（`namespace`の記述を忘れない...）
-2.　`class map`を作成しないといけないため, `Composer.json`に登録し、`composr dump-autoload`を実行.
+2.　`class map`を作成しないといけないため, `Composer.json`に登録し、`composer dump-autoload`を実行.
 ```php
 "autoload": {
         "classmap": [
@@ -185,6 +185,11 @@ $this->app->extend(Service::class, function($service) {
 ```
 3. `config\app.php`にエイリアスを作成. (任意)
 4. 使いたい時に`use`で呼び込む.
-
-
+- 参照 https://qol-kk.com/wp2/blog/2019/04/01/post-1183/
+### Difference bw composer dump-autoload and php artisan dump-autoload
+https://lavalite.org/blog/differences-between-php-artisan-dump-autoload-and-composer-dump-autoload
  
+### アクティブレコード (Active record, Active record pattern) = CRUD(4つのデータベース操作を表す「Create」「Read」「Update」「Delete」の頭字語) Active Recordはこれらのメソッドを自動的に作成する.
+- Rails発祥のアイディアだがLaravelのEloquentにも適用されている.
+- Add a new model file in `app\Models` by hitting `php artisan make:model Models\\Ingredient` **クラス名は単数形にすること**.
+- モデルにどのテーブルを使用するか、Eloquentに指定していない点に注目。他の名前を明示的に指定しない限り、クラス名を複数形の「スネークケース」にしたものが、テーブル名として使用される.

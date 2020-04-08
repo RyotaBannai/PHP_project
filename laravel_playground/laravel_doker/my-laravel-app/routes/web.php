@@ -32,6 +32,7 @@ Route::get('/util', function(MyUtil $util){ // 無名関数でサービスの呼
 
 Route::get('/sayhi','FacadeController@index');
 Route::get('/dojobs', 'SameFunctionsController@index');
+Route::get('/food', 'FoodController@index');
 
 Route::prefix('redis')->group(function(){
     // regex もしあればwhereでヒットするurl
