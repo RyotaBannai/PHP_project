@@ -231,6 +231,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
 
         'SayHi' => App\Facades\SayHi::class,
+        'BaseFunctions' => App\Library\Functions::class,
 
     ],
 

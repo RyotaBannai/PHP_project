@@ -155,9 +155,36 @@ $this->app->extend(Service::class, function($service) {
 2. `App\Services`に独自のクラスを作成し、ファサードとして利用したいロジックを作成.
 3. Service Providerの中で `\App\Services`に作成したロジックをbind.
 4. `App\Facades`に独自のファサードとして使えるようにするためのロジックを書くためのファイルを作成（フォルダがなければ作成）
-5. `App\Facades`で作成したファイルに`use Illuminate\Support\Facades\Facade;`をして継承. サブクラスに`protected static function getFacadeAccessor()`メソッドを作成し、このメソッド内で**3**でbindしたキーをreturn.
+5. `App\Facades`で作成したファイルに`use Illuminate\Support\Facades\Facade;`をしてこれを拡張する. サブクラスに`protected static function getFacadeAccessor()`メソッドを作成し、このメソッド内で**3**でbindしたキーをreturn.
 6. `config\app.php`に**3**のService Providerを登録　
 7. `config\app.php`に**4,5**のファサードを登録
 - こうすることでバックエンド側を意識せずに、コントローラーやbladeで使用する複雑なロジックの再利用性をあげたり、ボリューミーなコードを分割して管理することができる.
 - **尚**、DBを操作するときはファサードではなくモデルに記述する.　ファサードはその文字通りフロントエンドで使用すると言う意図を含む.
 - 参照 https://laraweb.net/practice/6073/
+- https://laraweb.net/practice/2065/
+- DIだと明確に呼び出さないといけないが、ファサードを使用すれば使いたい場所でそのままスタティックメソッドを呼び出せば良い.これをリアルタイムファサードと呼ぶ.
+### ファサードを注意点
+- ファサードはとても簡単に使用でき依存注入も必要ないため、簡単にクラスが成長し続ける結果、一つのクラスで多くのファサードが使われる.
+- ファサードを使用するときは、クラスの責任範囲を小さくとどめるため、**クラスサイズにとくに注意を払う**.
+- 「契約 Vs. ファサード」：https://readouble.com/laravel/7.x/ja/contracts.html
+- ファサード一覧: https://readouble.com/laravel/7.x/ja/facades.html
+### ヘルパ関数
+- `cache('key)` とか `view('profile')`のような関数.
+### 共通関数・汎用関数：ファサードまでは大袈裟にやりたくないが、同じ処理を複数の関数で使いまわしたい場合に利用.
+- 共通関数を作成する手順:
+1. `app\Library`に作成したいクラスを作成. 無ければ作成.　（`namespace`の記述を忘れない...）
+2.　`class map`を作成しないといけないため, `Composer.json`に登録し、`composr dump-autoload`を実行.
+```php
+"autoload": {
+        "classmap": [
+            "database/seeds",
+            "database/factories",
+            "app/Library" // 追加
+        ]
+    },
+```
+3. `config\app.php`にエイリアスを作成. (任意)
+4. 使いたい時に`use`で呼び込む.
+
+
+ 
