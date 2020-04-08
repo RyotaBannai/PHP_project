@@ -119,7 +119,7 @@ class Walk
 ```
 - 違いはコンストラクタ内でnewを使っているか、コンストラクタの引数にDog型の引数を渡しているか。
 - この違いはWalk(散歩クラス)のDogへの依存度に差を生む。
-- ex.1はDogクラスの犬しか散歩させることがで機内が、ex.2はDogだけでなくDogクラスを継承したLabやDachshundをインスタンス生成時に指定することでWalkクラスを用いて散歩させることができる。つまり、**Walkクラスの操作対象がDogに限定されていたものが、外部から指定可能になった。**これが依存度が下がったという意味である。これを「依存を外部から注入する」と言う理由の仕組みである.
+- ex.1はDogクラスの犬しか散歩させることがで機内が、ex.2はDogだけでなくDogクラスを継承したLabやDachshundをインスタンス生成時に指定することでWalkクラスを用いて散歩させることができる。つまり、**Walkクラスの操作対象がDogに限定されていたものが、外部から指定可能になった。** これが依存度が下がったという意味である。これを「依存を外部から注入する」と言う理由の仕組みである.
 - サービスプロバイダでコードを管理することで良いこと：
     1. テスト時にはアプリケーションコードで生成されるインスタンスをテスト用にすり替えるといったことができる
     2. あるインスタンスはアプリケーション実行プロセスで一つだけ（シングルトン）にしたいので、2回目の生成時には前回生成したインスタンスを返す
@@ -145,3 +145,19 @@ $this->app->extend(Service::class, function($service) {
 });
 ```
 - this is like the same implementation of Python's decorator.
+### Facade ファサード: なるべくロジックの記述を奥にしまいこんで、簡潔にクラスのメソッドを呼び出すようにするのがファサードの役割
+- Laravelでは標準で37種類のファサードが提供されてる.
+- Request:: やRoute:: などLaravelに標準で搭載されているお馴染みのファサード.
+- `vendor\laravel\framework\src\Illuminate\Support\Facades\Request.php` に置かれている.
+- `Config`: config/app.phpの値を取得. `Log`: ログの書き出しなど. storage/logsなどに書き出せるのでデバックなどで重宝する.
+- Facadeを使えるようにするまでの手順:
+1. `App\Providers`にService Providerを作成. hit the following command `php artisan make:provider ${ANY}ServiceProvider`
+2. `App\Services`に独自のクラスを作成し、ファサードとして利用したいロジックを作成.
+3. Service Providerの中で `\App\Services`に作成したロジックをbind.
+4. `App\Facades`に独自のファサードとして使えるようにするためのロジックを書くためのファイルを作成（フォルダがなければ作成）
+5. `App\Facades`で作成したファイルに`use Illuminate\Support\Facades\Facade;`をして継承. サブクラスに`protected static function getFacadeAccessor()`メソッドを作成し、このメソッド内で**3**でbindしたキーをreturn.
+6. `config\app.php`に**3**のService Providerを登録　
+7. `config\app.php`に**4,5**のファサードを登録
+- こうすることでバックエンド側を意識せずに、コントローラーやbladeで使用する複雑なロジックの再利用性をあげたり、ボリューミーなコードを分割して管理することができる.
+- **尚**、DBを操作するときはファサードではなくモデルに記述する.　ファサードはその文字通りフロントエンドで使用すると言う意図を含む.
+- 参照 https://laraweb.net/practice/6073/

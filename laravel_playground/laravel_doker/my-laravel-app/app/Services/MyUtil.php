@@ -1,7 +1,8 @@
 <?php
 namespace App\Services;
 
-class MyUtil{
+class MyUtil
+{
     public static function getMessage(){
         return 'hellowwww';
     }

@@ -176,6 +176,7 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         App\Providers\UtilServiceProvider::class,
+        App\Providers\SayHiServiceProvider::class,
 
     ],
 
@@ -228,6 +229,8 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
+
+        'SayHi' => App\Facades\SayHi::class,
 
     ],
 

@@ -30,6 +30,8 @@ Route::get('/util', function(MyUtil $util){ // 無名関数でサービスの呼
     # app()->call( 'MyController@show', ['id'=> $id] ); // 引数で渡したい場合
 });
 
+Route::get('/sayhi','FacadeController@index');
+
 Route::prefix('redis')->group(function(){
     // regex もしあればwhereでヒットするurl
     Route::get('{anything?}', 'RedisController@set')->where('anything', 'set');
