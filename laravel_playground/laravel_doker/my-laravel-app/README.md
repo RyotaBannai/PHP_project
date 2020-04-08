@@ -193,3 +193,8 @@ https://lavalite.org/blog/differences-between-php-artisan-dump-autoload-and-comp
 - Rails発祥のアイディアだがLaravelのEloquentにも適用されている.
 - Add a new model file in `app\Models` by hitting `php artisan make:model Models\\Ingredient` **クラス名は単数形にすること**.
 - モデルにどのテーブルを使用するか、Eloquentに指定していない点に注目。他の名前を明示的に指定しない限り、クラス名を複数形の「スネークケース」にしたものが、テーブル名として使用される.
+- Modeleで作ったメソッドは、Controller内で直接呼び出すと言うよりかは、all() で取ってきた全データに対してメソッドを使う、 と言う考え方.
+- そのため、foreachでは連想配列で添字を使用して各要素を呼び出している訳じゃなく、各インスタンスのプロパティを取得していると言う訳なのである.
+- dockre環境でSeedを使うときは一回中に入らないと、dbにアクセスできないの注意. `docker-compose exec app bash` `php artisan db:seed --class=UsersTableSeeder`
+- データベースをからにする場合 `php artisan migrate:refresh` からにしてシードを知れる場合 `php artisan migrate:refresh --seed`
+- 参照 https://qiita.com/yukibe/items/f18c946105c89c37389d

@@ -16,7 +16,7 @@ class RedisController
     }
 
     public function set(){
-        $this->id=1;
+        $this->id=2;
         // db からデータ取得
         $data = DB::table($this->table)->select('id', 'name','email')->where('id', $this->id)->first();
 
