@@ -35,7 +35,10 @@ Route::get('/dojobs', 'SameFunctionsController@index');
 Route::get('/food', 'FoodController@index');
 Route::get('/users', 'UserController@index');
 
-
+Route::prefix('flight')->group(function (){
+    Route::match(['get'], 'display', 'ORMController@index');
+    Route::get('/register', 'ORMController@store');
+});
 
 
 Route::prefix('redis')->group(function(){

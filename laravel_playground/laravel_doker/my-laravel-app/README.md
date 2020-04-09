@@ -188,16 +188,6 @@ $this->app->extend(Service::class, function($service) {
 - 参照 https://qol-kk.com/wp2/blog/2019/04/01/post-1183/
 ### Difference bw composer dump-autoload and php artisan dump-autoload
 https://lavalite.org/blog/differences-between-php-artisan-dump-autoload-and-composer-dump-autoload
- 
-### アクティブレコード (Active record, Active record pattern) = CRUD(4つのデータベース操作を表す「Create」「Read」「Update」「Delete」の頭字語) Active Recordはこれらのメソッドを自動的に作成する.
-- Rails発祥のアイディアだがLaravelのEloquentにも適用されている.
-- Add a new model file in `app\Models` by hitting `php artisan make:model Models\\Ingredient` **クラス名は単数形にすること**.
-- モデルにどのテーブルを使用するか、Eloquentに指定していない点に注目。他の名前を明示的に指定しない限り、クラス名を複数形の「スネークケース」にしたものが、テーブル名として使用される.
-- Modeleで作ったメソッドは、Controller内で直接呼び出すと言うよりかは、all() で取ってきた全データに対してメソッドを使う、 と言う考え方.
-- そのため、foreachでは連想配列で添字を使用して各要素を呼び出している訳じゃなく、各インスタンスのプロパティを取得していると言う訳なのである.
-- docker環境でSeedを使うときは一回中に入らないと、dbにアクセスできないの注意.(homestead使っている時など) `docker-compose exec app bash` `php artisan db:seed --class=UsersTableSeeder`
-- データベースをからにする場合 `php artisan migrate:refresh` からにしてシードを知れる場合 `php artisan migrate:refresh --seed`
-- 参照 https://qiita.com/yukibe/items/f18c946105c89c37389d
 ### Query Builder
 - 参照 https://readouble.com/laravel/5.5/ja/queries.html
 ### Migration, マイグレーション：データベースのバージョンコントロールのような機能.
@@ -210,4 +200,41 @@ https://lavalite.org/blog/differences-between-php-artisan-dump-autoload-and-comp
 - 参考 https://stackoverflow.com/questions/6720050/foreign-key-constraints-when-to-use-on-update-and-on-delete
 - https://www.mysqltutorial.org/mysql-on-delete-cascade/
 - Laravel docs: https://readouble.com/laravel/5.5/ja/migrations.html
-
+### composer.json, autoload
+- 記述方式は 、"名前空間プレフィクス\\" : "対応するベースディレクトリ" となる。
+- 例えば、 namespace Controllers と宣言されたクラスは、app/controllers/の中にありますよ、と設定してあげている状態。
+- composer.json書き終えたら、`composer dump-autoload` をする.(必須)
+```php
+{
+    "autoload": {
+        "psr-4": {
+            "Controllers\\" : "app/controllers/",
+        }
+    }
+}
+```
+- 実際に使う時は以下の様な感じ. App\から始める必要無かったり便利.
+```php
+use Controller\MyController
+```
+- 参考 https://qiita.com/yotsak83/items/cc1a4936c0c92099db5a
+### アクティブレコード (Active record, Active record pattern) = CRUD(4つのデータベース操作を表す「Create」「Read」「Update」「Delete」の頭字語) Active Recordはこれらのメソッドを自動的に作成する.
+- Rails発祥のアイディアだがLaravelのEloquentにも適用されている.
+- Add a new model file in `app\Models` by hitting `php artisan make:model Models\\Ingredient` **クラス名は単数形にすること**.
+- モデルにどのテーブルを使用するか、Eloquentに指定していない点に注目。他の名前を明示的に指定しない限り、クラス名を複数形の「スネークケース」にしたものが、テーブル名として使用される.
+- Modeleで作ったメソッドは、Controller内で直接呼び出すと言うよりかは、all() で取ってきた全データに対してメソッドを使う、 と言う考え方.
+- そのため、foreachでは連想配列で添字を使用して各要素を呼び出している訳じゃなく、各インスタンスのプロパティを取得していると言う訳なのである.
+- docker環境でSeedを使うときは一回中に入らないと、dbにアクセスできないの注意.(homestead使っている時など) `docker-compose exec app bash` `php artisan db:seed --class=UsersTableSeeder`
+- データベースをからにする場合 `php artisan migrate:refresh` からにしてシードを知れる場合 `php artisan migrate:refresh --seed`
+- 参照 https://qiita.com/yukibe/items/f18c946105c89c37389d
+### Eloquent ORM 
+- ORM作成時にマイグレーションも作成したい場合`php artisan make:model User --migration (or -m)`
+- Eloquentは更にテーブルの主キーがidというカラム名であると想定。この規約をオーバーライドする場合は、**protectedのprimaryKeyプロパティ**を定義
+- 主キーに関しては色々と制約があるため、気を付ける. int, autoincrementでない場合等. 
+- Eloquentモデルはデフォルトでアプリケーションに設定されているデフォルトのデータベース接続を利用. モデルで異なった接続をしたい場合は、**$connectionプロパティ**を使用.
+- 複数の結果を取得するallやgetのようなEloquentメソッドは、Illuminate\Database\Eloquent\Collectionインスタンスを返す。CollectionクラスはEloquent結果を操作する多くの便利なクラスを提供している。つまり、query builderで使える様な関数をEloquentdでも使えると言うこと.
+- `::find`メソッドは主キーと一致したレコードを返す.
+- `::where('active', 1)->count()`とかで集計ができる
+- ソフトデリート（論理消去）をやるには、`Illuminate\Database\Eloquent\SoftDeletes`トレイトを使い、`deleted_at`カラムを`$dates`プロパティに追加.`softDeletes()`を使い、実際にソフトデリートされたかどうか確認するには `trashed()`. ソフトデリートしたモデルは自動的にクエリの結果から除外される.なので取得したい時は、`withTrashed()`.
+- all() などのグローバルスコープの挙動を変えたい時は、`Illuminate\Database\Eloquent\Scope`インターフェイスを実装したクラスを定義し,apply()にwhere を書く. overwriteすることになるため、selectは使用してはならない。それから、modelでboot()、その中でparent::boot();static::addGlobalScope(new YourNewScope);` を記述.
+- Eloquentではイベントを発行できる。creaitng, updating, deleting等. これを関しして、リアルタイムノオ投票結果システムなど構築できる.
