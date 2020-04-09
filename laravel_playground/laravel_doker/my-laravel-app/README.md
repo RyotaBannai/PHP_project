@@ -237,4 +237,38 @@ use Controller\MyController
 - `::where('active', 1)->count()`とかで集計ができる
 - ソフトデリート（論理消去）をやるには、`Illuminate\Database\Eloquent\SoftDeletes`トレイトを使い、`deleted_at`カラムを`$dates`プロパティに追加.`softDeletes()`を使い、実際にソフトデリートされたかどうか確認するには `trashed()`. ソフトデリートしたモデルは自動的にクエリの結果から除外される.なので取得したい時は、`withTrashed()`.
 - all() などのグローバルスコープの挙動を変えたい時は、`Illuminate\Database\Eloquent\Scope`インターフェイスを実装したクラスを定義し,apply()にwhere を書く. overwriteすることになるため、selectは使用してはならない。それから、modelでboot()、その中でparent::boot();static::addGlobalScope(new YourNewScope);` を記述.
-- Eloquentではイベントを発行できる。creaitng, updating, deleting等. これを関しして、リアルタイムノオ投票結果システムなど構築できる.
+- Eloquentではイベントを発行できる。creaitng, updating, deleting等. これ利用してリアルタイムの投票結果システムなど構築できる.
+### Eloquent ORM リレーション
+- User テーブルクラスで hasOne('Models\Phone')を定義し、User::find(1)->phone;とする-> 初めにユーザーid, ここではuser_idがphone テーブルにあると仮定して、その情報を取得するリレーションを作成することができる.
+```php
+class User extends Model
+{
+    public function phone()
+    {
+        return $this->hasOne('App\Phone');
+    }
+}
+----
+$phone = User::find(1)->phone; // 1vs 1　
+```
+- 何が嬉しいか: phone テーブルを触らなくていい = user テーブルだけ使える
+- 逆の関係の定義では`belongTo('App\User')`を使う. _idのサフィックスとテーブル名と一致するidを探す。ここでは Userなのでuser_idとUserテーブルのidをみる. user が存在しない時の処理は `withDefault()`
+- 1 vs 多数の場合　twitterなどの場合は `hasMany()`
+- i vs 多数（Inverse）の場合　記事のブックマークやいいね！の梅は`belong**s**To()`
+- 多数 vs 多数　の場合　ユーザーのロール. `belongsToMany()` で３つテーブルが必要. users とroles とrole_user(中間テーブル). このuser_roleにはuser_id, role_idが含まれている必要がある. `belongsToMany('Models\Role, 'role_user', 'user_id', 'role_id')` がdefault.
+### has many through 
+- 一つのテーブル経由で複数のレコードを取得.
+### ポリモーフィック関係
+- リレーションは一つの関係で、複数のモデルに所属させたい時.
+### 多対多ポリモーフィック関係
+- 多対多 + ポリモーフィック. 例えば、動画、記事などの複数のコンテンツに対するタグ. 動画、記事という複数のテーブルに対してポリモーフィックにし、そのコンテンツに複数のタグレコードが関連する場合.
+### リレーションメソッド 対 動的プロパティ
+- 取得したコレクションにプロパティにアクセスしたときに実際にデータをロードする（遅延ロード）。これだとパフォーマンスが悪いため、Eagerローディングで事前に全てロードしておくと良い. (都度ロードするということはN+1問題だということ)
+- ::with('author)->get()を使用.
+### 遅延Eagerローディング
+- all()で読み込んだ後に、laod()を使う.
+```pho
+$books = Models\Book::all();
+$books->load('author');
+```
+- 参照 https://readouble.com/laravel/5.5/ja/eloquent-relationships.html
