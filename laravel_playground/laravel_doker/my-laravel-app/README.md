@@ -272,3 +272,5 @@ $books = Models\Book::all();
 $books->load('author');
 ```
 - 参照 https://readouble.com/laravel/5.5/ja/eloquent-relationships.html
+### 変数受け渡し方法
+- https://qiita.com/ryo2132/items/63ced19601b3fa30e6de
