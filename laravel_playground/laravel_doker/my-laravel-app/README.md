@@ -173,7 +173,7 @@ $this->app->extend(Service::class, function($service) {
 ### 共通関数・汎用関数：ファサードまでは大袈裟にやりたくないが、同じ処理を複数の関数で使いまわしたい場合に利用.
 - 共通関数を作成する手順:
 1. `app\Library`に作成したいクラスを作成. 無ければ作成.　（`namespace`の記述を忘れない...）
-2.　`class map`を作成しないといけないため, `Composer.json`に登録し、`composer dump-autoload`を実行.
+2.　`class map`を作成しないといけないため, `composer.json`に登録し、`composer dump-autoload`を実行.
 ```php
 "autoload": {
         "classmap": [
@@ -195,7 +195,8 @@ https://lavalite.org/blog/differences-between-php-artisan-dump-autoload-and-comp
 - もし今まで、チームメイトに彼らのローカルデータベーススキーマに手作業でカラムを追加するよう依頼したことがあるなら、データベースマイグレーションは、そうした問題を解決する.
 - `php artisan make:migration create_flights_table` `create_XXXX_table` XXXXの部分をテーブル名にする.
 - `php artisan migrate:rollback`で最後のmigrationを元に戻す= テーブルを消去. `php artisan migrate:rollback --step=5`で最後の5マイグレーションをロールバック. `php artisan migrate:reset` で全てのマイグレーションをロールバック.
-- データベースをリフレッシュしたい.. `php artisan migrage:refresh`-> 全てロールバックして、全てマイグレーションする.  `php artisan migrage:refresh`-> シードも加える. **refreshはfresh(drop)とは別の概念.**
+- 特定のテーブルに対して実行したい場合はパスも指定する`php artisan migrate:refresh  --path=/database/migrations/2014_10_12_000000_create_users_table.php`
+- データベースをリフレッシュしたい.. `php artisan migrage:refresh`-> 全てロールバックして、全てマイグレーションする.  `php artisan migrage:refresh --seed`-> シードも加える. **refreshはfresh(drop)とは別の概念.**
 - **外部キー制約** `$table->foreign('user_id')->references('id')->on('users')` この場合、`company` tableの`user_id` に`users` tableの`id`をリンクさせる. さらに束縛に対して、on Deleteやon Updateに対する処理をオプションとして指定できる. `onDelete('cascade')`で`id`が消去された時に、`company`のレコードも消去される. 消去したく無ければ、null を指定。デフォルトはrestrictまたはnoactionで削除アクションは拒否される.
 - 参考 https://stackoverflow.com/questions/6720050/foreign-key-constraints-when-to-use-on-update-and-on-delete
 - https://www.mysqltutorial.org/mysql-on-delete-cascade/
@@ -224,8 +225,8 @@ use Controller\MyController
 - モデルにどのテーブルを使用するか、Eloquentに指定していない点に注目。他の名前を明示的に指定しない限り、クラス名を複数形の「スネークケース」にしたものが、テーブル名として使用される.
 - Modeleで作ったメソッドは、Controller内で直接呼び出すと言うよりかは、all() で取ってきた全データに対してメソッドを使う、 と言う考え方.
 - そのため、foreachでは連想配列で添字を使用して各要素を呼び出している訳じゃなく、各インスタンスのプロパティを取得していると言う訳なのである.
-- docker環境でSeedを使うときは一回中に入らないと、dbにアクセスできないの注意.(homestead使っている時など) `docker-compose exec app bash` `php artisan db:seed --class=UsersTableSeeder`
-- データベースをからにする場合 `php artisan migrate:refresh` からにしてシードを知れる場合 `php artisan migrate:refresh --seed`
+- docker環境でSeedを使うときは一回中に入らないと、dbにアクセスできないの注意.(homestead使っている時など) `docker-compose exec app bash`, `php artisan db:seed --class=UsersTableSeeder`
+- データベースをからにする場合 `php artisan migrate:refresh` からにしてシードを入れる場合 `php artisan migrate:refresh --seed`
 - 参照 https://qiita.com/yukibe/items/f18c946105c89c37389d
 ### Eloquent ORM 
 - ORM作成時にマイグレーションも作成したい場合`php artisan make:model User --migration (or -m)`
@@ -271,6 +272,8 @@ $phone = User::find(1)->phone; // 1vs 1　
 $books = Models\Book::all();
 $books->load('author');
 ```
-- 参照 https://readouble.com/laravel/5.5/ja/eloquent-relationships.html
+- 参照 https://readouble.com/laravel/5.5/ja/eloquent-relationshiphtml
 ### 変数受け渡し方法
 - https://qiita.com/ryo2132/items/63ced19601b3fa30e6de
+### Eloquent コレクション
+- ほとんどのEloquentコレクションは新しいEloquentコレクションのインスタンスを返す(`Illuminate\Database\Eloquent\Collection`)が、pluck、keys、zip、collapse、flatten、flipメソッドはベースのコレクションインスタンスを返す(`Illuminate\Support\Collection`)。Eloquentモデルをまったく含まないコレクションを返すmap操作のような場合、自動的にベースコレクションへキャストされる。

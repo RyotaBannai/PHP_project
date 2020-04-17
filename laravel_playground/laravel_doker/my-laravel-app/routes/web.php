@@ -33,7 +33,14 @@ Route::get('/util', function(MyUtil $util){ // 無名関数でサービスの呼
 Route::get('/sayhi','FacadeController@index');
 Route::get('/dojobs', 'SameFunctionsController@index');
 Route::get('/food', 'FoodController@index');
-Route::get('/users', 'UserController@index');
+
+Route::prefix('users')->group(function(){
+    Route::get('list', 'UserController@userList');
+    Route::get('form', 'UserController@userForm');
+    Route::post('out', 'UserController@userOut');
+    Route::get('/', 'UserController@index');
+});
+
 
 Route::prefix('flight')->group(function (){
     Route::match(['get'], 'display', 'ORMController@index');

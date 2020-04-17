@@ -14,14 +14,14 @@ class Dog implements Animal {
 }
 
 // Service Binding
-$this->app->bind('dog', 'Dog');
+app()->bind('dog', 'App\Http\Controllers\Dog');
 
 class ServiceContainerController
 {
     private $myPetCry;
     public function __construct()
     {
-        $this->myPetCry = $this->app->make('dog');
+        $this->myPetCry = app()->make('dog');
     }
     public function index(){
         return view('view.index', [

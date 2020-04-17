@@ -48,7 +48,39 @@ class UserController extends Controller
         // lockForUpdate()->get()
         return view(
             'user.index',
-            ['users'=>$users]
+            compact('users')
         );
+    }
+    public function userForm(Request $req){
+        $data = 'data';
+        return view('user.form', compact('data'));
+    }
+    public function userOut(Request $req){
+        $post_data= $req->all();
+        return view("user.out", compact("post_data"));
+    }
+    public function userList(Request $req){
+        $users = User::all();
+        $id = $req->input('id') ?? null;
+
+        if (isset($id)){
+            if ($users->contains($id)){
+                return "you are registered";
+            }
+            else{
+                return "Not registered yet";
+            }
+        }
+        else {
+            $names = $users->reject(function ($user) {
+                return $user->active === 0; // reject
+            })->map(function ($user) {
+                return $user->name;
+            });
+            return view(
+                'user.index',
+                ['users' => $names]
+            );
+        }
     }
 }

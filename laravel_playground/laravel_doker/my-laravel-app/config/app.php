@@ -177,6 +177,7 @@ return [
 
         App\Providers\UtilServiceProvider::class,
         App\Providers\SayHiServiceProvider::class,
+        Collective\Html\HtmlServiceProvider::class
 
     ],
 
@@ -232,6 +233,8 @@ return [
 
         'SayHi' => App\Facades\SayHi::class,
         'BaseFunctions' => App\Library\Functions::class,
+        'Form' => Collective\Html\FormFacade::class,
+        'Html' => Collective\Html\HtmlFacade::class,
 
     ],
 

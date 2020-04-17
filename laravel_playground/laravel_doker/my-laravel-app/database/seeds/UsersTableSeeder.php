@@ -16,6 +16,7 @@ class UsersTableSeeder extends Seeder
                 'remember_token' => '',
                 'created_at' => new DateTime(),
                 'updated_at' => new DateTime(),
+                'active' => array_rand(array(0,1))
             ]);
         }
     }
