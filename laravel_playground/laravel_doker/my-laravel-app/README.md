@@ -277,3 +277,8 @@ $books->load('author');
 - https://qiita.com/ryo2132/items/63ced19601b3fa30e6de
 ### Eloquent コレクション
 - ほとんどのEloquentコレクションは新しいEloquentコレクションのインスタンスを返す(`Illuminate\Database\Eloquent\Collection`)が、pluck、keys、zip、collapse、flatten、flipメソッドはベースのコレクションインスタンスを返す(`Illuminate\Support\Collection`)。Eloquentモデルをまったく含まないコレクションを返すmap操作のような場合、自動的にベースコレクションへキャストされる。
+### Blade
+- https://www.larashout.com/12-awesome-laravel-blade-directives-to-try-today
+- @include は親blade　から子bladeに後から変数を渡したい時に使う。header componentにタイトル名を渡す時とか。
+- @eachならormからコレクションをそのままviewに変数を渡したい場合に便利。
+

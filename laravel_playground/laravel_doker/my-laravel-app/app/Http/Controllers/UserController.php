@@ -53,7 +53,7 @@ class UserController extends Controller
     }
     public function userForm(Request $req){
         $data = 'data';
-        return view('user.form', compact('data'));
+        return view('user.sidebar', compact('data'));
     }
     public function userOut(Request $req){
         $post_data= $req->all();
