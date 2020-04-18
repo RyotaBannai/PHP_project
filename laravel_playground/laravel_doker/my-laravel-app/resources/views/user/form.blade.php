@@ -58,4 +58,9 @@
     $message = 'hello world';
 @endphp
 <x-foot :message="$message"/>
-<x-alert alert-type="danger" type="error" :message="$message"/>
+<x-alert alert-type="danger" type="error" :message="$message" class="bg-red-400 text-white" id="0">
+    <x-slot name="title">
+        Server Error
+    </x-slot>
+    <strong>Whoops!</strong> Something is going to be <strong>Awesome!!</strong>
+</x-alert>

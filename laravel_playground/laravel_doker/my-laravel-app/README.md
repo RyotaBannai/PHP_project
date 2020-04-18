@@ -281,4 +281,16 @@ $books->load('author');
 - https://www.larashout.com/12-awesome-laravel-blade-directives-to-try-today
 - @include は親blade　から子bladeに後から変数を渡したい時に使う。header componentにタイトル名を渡す時とか。
 - @eachならormからコレクションをそのままviewに変数を渡したい場合に便利。
-
+### Blade component 
+- Blade's `@include` directive allows you to include a Blade view from within another view. All variables that are available to the parent view will be made available to the included view!
+```blade
+@include('shared.errors')
+```
+- Even though the included view will inherit all data available in the parent view, you may also pass an array of extra data to the included view.
+```blade
+@include('view.name', ['some' => 'data'])
+```
+- If you attempt to @include a view which does not exist, Laravel will throw an error. If you would like to include a view that may or may not be present, you should use the @includeIf directive.
+```blade
+@includeIf('view.name', ['some' => 'data'])
+```
