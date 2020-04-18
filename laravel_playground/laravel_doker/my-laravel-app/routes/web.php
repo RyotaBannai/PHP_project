@@ -36,8 +36,8 @@ Route::get('/food', 'FoodController@index');
 
 Route::prefix('users')->group(function(){
     Route::get('list', 'UserController@userList');
-    Route::get('form', 'UserController@userForm');
-    Route::post('out', 'UserController@userOut');
+    Route::get('form', 'UserController@userForm')->name('user.form');;
+    Route::post('out', 'UserController@userOut')->name('user.out');;;
     Route::get('/', 'UserController@index');
 });
 
