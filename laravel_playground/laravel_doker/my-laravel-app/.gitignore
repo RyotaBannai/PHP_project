@@ -1,4 +1,5 @@
 /node_modules
+/public
 /public/hot
 /public/storage
 /storage/*.key
@@ -6,6 +7,8 @@
 .env
 .env.backup
 .phpunit.result.cache
+package-lock.json
+package.json
 Homestead.json
 Homestead.yaml
 npm-debug.log

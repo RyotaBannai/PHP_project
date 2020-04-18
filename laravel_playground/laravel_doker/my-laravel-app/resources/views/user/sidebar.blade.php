@@ -5,6 +5,18 @@
 
 @include('common.error', ['text' => 'error... right'])
 
+@component('components.message')
+    @slot('error')
+        This is a dummy message just for testing purpose.
+    @endslot
+@endcomponent
+
+@component('components.message')
+    @slot('success')
+        You are success to log in!
+    @endslot
+@endcomponent
+
 @push('sidebar')
     <li>Sidebar list item</li>
 @endpush

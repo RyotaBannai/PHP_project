@@ -1,1 +1,20 @@
-//
+$width: 10px;
+$height: $width + 10px;
+$c-alert: #ffff00 ;
+$c-success: #0080ff ;
+$c-info: #8000ff;
+$c-default: var(--someColor);
+
+:root{
+    --someColor : coral;
+}
+
+.alert{
+    background-color: $c-alert ;
+}
+.success{
+    background-color: $c-success ;
+}
+.default {
+    background-color: $c-default;
+}
