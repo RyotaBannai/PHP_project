@@ -24,7 +24,6 @@
 @prepend('sidebar')
     <li>First Sidebar Item</li>
 @endprepend
-
 @section('scripts')
 #4 something special things to dot down! <br>
 @endsection

@@ -4,5 +4,6 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>@yield('title')</title>
     <meta name="description" content="{{$description}}">
-    <link rel="stylesheet" href="{{ asset('/css/app.css') }}">
+    {{ Html::style('css/app.css') }}
+    <!--link rel="stylesheet" href="{{ asset('/css/app.css') }}"--!>
 @endsection

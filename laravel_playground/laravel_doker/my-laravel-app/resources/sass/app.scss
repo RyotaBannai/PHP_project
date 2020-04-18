@@ -1,20 +1,31 @@
+@use "sass:map";
+@use "sass:meta";
+
 $width: 10px;
 $height: $width + 10px;
-$c-alert: #ffff00 ;
-$c-success: #0080ff ;
-$c-info: #8000ff;
-$c-default: var(--someColor);
+$accent-color : #fbbc04;
+$font-family-monospace: Menlo, Consolas, "Courier New", monospace;
+
+$message-colors:(
+    "alert": #ffff00 ,
+    "success": #0080ff ,
+    "info": #8000ff,
+    "default": var(--someColor),
+);
+
 
 :root{
     --someColor : coral;
+    --accent-color-right: #{$accent-color};
+    --font-family-monospace: #{meta.inspect($font-family-monospace)};
 }
 
 .alert{
-    background-color: $c-alert ;
+    background-color: map.get($message-colors, "alert");
 }
 .success{
-    background-color: $c-success ;
+    background-color: map.get($message-colors, "default");
 }
 .default {
-    background-color: $c-default;
+    background-color:  map.get($message-colors, "default"); ;
 }

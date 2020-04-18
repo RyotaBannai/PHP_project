@@ -54,3 +54,8 @@
     @endif
 @endforeach
 
+@php
+    $message = 'hello world';
+@endphp
+<x-foot :message="$message"/>
+<x-alert alert-type="danger" type="error" :message="$message"/>
