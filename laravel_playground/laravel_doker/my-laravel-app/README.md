@@ -294,3 +294,12 @@ $books->load('author');
 ```blade
 @includeIf('view.name', ['some' => 'data'])
 ```
+### 署名付きURL
+- 名前付きルートに対し`署名URL`を作成するには、URLファサードの`signedRoute`メソッドを使用
+- `署名付きルートリクエストの検査`では送信された`Request`に対して、`hasValidSignature`メソッドを呼ぶ。
+- それかmiddlewareでやる.
+```blade
+Route::post('/unsubscribe/{user}', function (Request $request) {
+    // ...
+})->name('unsubscribe')->middleware('signed');
+```

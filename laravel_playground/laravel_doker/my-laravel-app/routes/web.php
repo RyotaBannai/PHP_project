@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
 
 // プロバイダーで利用できるようになったサービスを利用
 use App\Services\MyUtil; // サービス（Utilクラス）のエイリアスを作成
@@ -29,6 +30,18 @@ Route::get('/util', function(MyUtil $util){ // 無名関数でサービスの呼
     # app()->call( 'MyController@show' ); //static メソッドのように呼び脱すこともできる.
     # app()->call( 'MyController@show', ['id'=> $id] ); // 引数で渡したい場合
 });
+
+
+Route::get('/post', function () {
+    // 名前付きルートを渡すと、それがurlになる
+    // $url = URL::signedRoute('comment.show', ['user' => 1]); // 名前付きルートで渡す
+    $tmpUrl = URL::temporarySignedRoute(
+        'comment.show', now()->addMinutes(30), ['user' => 1]);
+    return view("view.index", compact('url', 'tmpUrl'));
+})->name('comment.index');
+
+Route::get('/post/{user}/', 'RoutesController@sendAllParms')->name('comment.show');
+
 
 Route::get('/sayhi','FacadeController@index');
 Route::get('/dojobs', 'SameFunctionsController@index');

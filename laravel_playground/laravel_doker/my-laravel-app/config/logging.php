@@ -37,7 +37,8 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['single'],
+            'name' => 'laravel_logging',
+            'channels' => ['single', 'slack'],
             'ignore_exceptions' => false,
         ],
 
