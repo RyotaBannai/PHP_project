@@ -54,6 +54,7 @@ Route::prefix('users')->group(function(){
     Route::get('/', 'UserController@index');
 });
 
+Route::get('/logging','LogController@index');
 
 Route::prefix('flight')->group(function (){
     Route::match(['get'], 'display', 'ORMController@index');

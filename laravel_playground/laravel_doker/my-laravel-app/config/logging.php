@@ -45,6 +45,7 @@ return [
         'single' => [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),
+            'tap' => [App\Logging\CustomFormatterApply::class, App\Logging\CustomProcessorConnect::class],
             'level' => 'debug',
         ],
 
@@ -60,7 +61,7 @@ return [
             'url' => env('LOG_SLACK_WEBHOOK_URL'),
             'username' => 'Laravel Log',
             'emoji' => ':boom:',
-            'level' => 'critical',
+            'level' => 'info',
         ],
 
         'papertrail' => [
