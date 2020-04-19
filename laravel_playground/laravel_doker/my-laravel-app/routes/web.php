@@ -85,3 +85,5 @@ Route::get('/testCache', function() {
 });
 
 Route::get('/user', 'RedisController@get')->middleware('checkAge:author, senior');
+
+Route::get('/session', 'SessionController@index');
