@@ -13,7 +13,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        //handle とterminate で同じインスタンスを使いたい
+
+        $this->app->singleton(CheckAge::class);
+
     }
 
     /**

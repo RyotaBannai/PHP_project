@@ -303,3 +303,6 @@ Route::post('/unsubscribe/{user}', function (Request $request) {
     // ...
 })->name('unsubscribe')->middleware('signed');
 ```
+### Middleware 
+-  `app\Providers\RouteServiceProvider`により、`routes/web.php`ファイルでは、webミドルウェアグループが自動的に適用されている。
+- **handleとterminateメソッドの呼び出しで同一のミドルウェアインスタンスを使用したい場合**は、コンテナのsingletonメソッドを使用し、ミドルウェアを登録する。通常、`AppServiceProvider.php`のregisterメソッドの中で登録。
