@@ -10,9 +10,7 @@ unzip \
 vim
 
 RUN apt-get update \
-&& apt-get install -y libpq-dev \
+&& apt-get install -y libpq-dev npm nodejs \
 && docker-php-ext-install pdo_mysql pdo_pgsql \
-&& nodejs npm
-
 
 WORKDIR /var/www/html
