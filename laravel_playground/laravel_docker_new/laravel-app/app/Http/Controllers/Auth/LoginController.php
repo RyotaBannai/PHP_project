@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+use Auth;
 
 class LoginController extends Controller
 {
@@ -35,8 +37,20 @@ class LoginController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest')->except('logout');
+        //$this->middleware('guest')->except('logout');
     }
+
+    // attempt return true or false
+    public function login(Request $request){
+    //    if (Auth::attempt($credentials)) {
+    //     if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->remember)) { // デフォルトである程度キャッシュみてくれるのかな
+    if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){ // , 'active' => 1 とかにして有無効を管理
+            return redirect()->intended('home');
+        }
+    return redirect('login')->withInput($request->input())->with(['message'=>'Some message']);
+    }
+
+
     /* // ログインフォームの表示関連設定
     public function showLoginForm(){
         return route('home');
