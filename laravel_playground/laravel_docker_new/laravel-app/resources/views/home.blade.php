@@ -13,7 +13,7 @@
                             {{ session('status') }}
                         </div>
                     @endif
-
+                    @if($data ?? ''){{ $data ?? '' }}@endif
                     You are logged in!
                 </div>
             </div>
