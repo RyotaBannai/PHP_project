@@ -32,4 +32,27 @@ public function authenticate(Request $request)
     }
 ```
 - リダイレクタの`intended`メソッドは、認証フィルターで引っかかる前にアクセスしようとしていたURLへ、ユーザーをリダイレクト。そのリダイレクトが不可能な場合の移動先として、フォールバックURIをこのメソッドに指定.
-- 
+- エラーメッセージをbladeに送る手法
+1: カスタムのエラ〜メッセージを作る用のクラス 
+2: 追加するエラーを変数付きで宣言
+3: withErrors で返す
+4: message を使う
+```php
+LoginController.php
+use Illuminate\Support\MessageBag; ---1
+$message_bag->add('error', 'This is the error message'); ---2
+return redirect('login')->withInput($request->input())->withErrors($message_bag); ---3
+
+login.blade.php
+@error('error') {{ $message }} @enderror ---4
+```
+- 2つ目
+1: sessionにエラーメッセージも追加するパターン
+2: sessionヘルパ関数から採取する
+```php
+LoginController.php
+return redirect('login')->withInput($request->input())->with(['message'=>'Wrong username/password combination']); ---1
+
+login.blade.php
+@if(session()->has('message')) {{ session()->get( 'message' )}} @endif ---2
+```

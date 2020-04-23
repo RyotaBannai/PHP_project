@@ -22,7 +22,8 @@
                                     </span>
                                 @endif
 
-                                @error('email')
+
+                                @error('error')
                                 <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>

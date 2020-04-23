@@ -50,7 +50,7 @@ class LoginController extends Controller
             }
             $message_bag->add('error', 'This is the error message');
             // dd($message_bag);
-        //return redirect('login')->withInput($request->input())->with(['message'=>'Wrong username/password combination']);
+        //return redirect('login')->withInput($request->input())->with(['message'=>'Wrong username/password combination']); // session()->get('message') で取得
         return redirect('login')->withInput($request->input())->withErrors($message_bag);
         // ->withFlashMessage('Wrong username/password combination.'); // flash_message でアクセス可
     }
