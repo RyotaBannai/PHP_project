@@ -9,11 +9,11 @@ class AuthServiceProvider extends ServiceProvider
 {
     /**
      * The policy mappings for the application.
-     *
-     * @var array
+     * Eloquentモデルと対応するポリシーをマップ
      */
     protected $policies = [
         // 'App\Model' => 'App\Policies\ModelPolicy',
+        Post::class => PostPlicy::class,
     ];
 
     /**
@@ -24,7 +24,7 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
+        // Gate::guessPolicyNamesUsing
 
-        //
     }
 }
