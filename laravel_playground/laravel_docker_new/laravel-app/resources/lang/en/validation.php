@@ -54,7 +54,7 @@ return [
         'numeric' => 'The :attribute must be greater than or equal :value.',
         'file' => 'The :attribute must be greater than or equal :value kilobytes.',
         'string' => 'The :attribute must be greater than or equal :value characters.',
-        'array' => 'The :attribute must have :value items or more.',
+        'array' => 'The :avattribute must have :value items or more.',
     ],
     'image' => 'The :attribute must be an image.',
     'in' => 'The selected :attribute is invalid.',

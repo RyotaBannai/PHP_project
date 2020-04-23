@@ -22,10 +22,14 @@
                                     </span>
                                 @endif
 
+                                @if(session()->has('errors'))
+                                    {{$errors->login->first('error')}}
+                                @endif
 
-                                @error('error')
+                                @error('login')
+                                    @dd(session()->all())
                                 <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
+                                        <strong>{{ $login }}</strong>
                                     </span>
                                 @enderror
                             </div>

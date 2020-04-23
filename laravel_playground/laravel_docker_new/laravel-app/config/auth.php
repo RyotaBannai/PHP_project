@@ -13,6 +13,9 @@ return [
     |
     */
 
+    /*
+     * Auth::user() instead of Auth::guard('web')->user()
+     */
     'defaults' => [
         'guard' => 'web',
         'passwords' => 'users',

@@ -18,7 +18,12 @@ class RedirectIfAuthenticated
      */
     public function handle($request, Closure $next, $guard = null)
     {
+        // dd($guard); // login 時に null なのでdefaultの web
+        // $guard = 'api'; // tokenがないとエラー
+        // $guard = $guard ?: $this->getDefaultDriver(); -> web
+
         if (Auth::guard($guard)->check()) {
+
             return redirect(RouteServiceProvider::HOME);
         }
 

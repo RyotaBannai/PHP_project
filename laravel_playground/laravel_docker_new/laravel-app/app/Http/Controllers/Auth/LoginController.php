@@ -38,20 +38,21 @@ class LoginController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest')->except('logout');
+        $this->middleware('guest')->except('logout'); // logout method が呼び出されている時以外の処理
     }
 
     // attempt return true or false
     public function login(Request $request, MessageBag $message_bag){
         //    if (Auth::attempt($credentials)) {
-        //     if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->remember)) { // デフォルトである程度キャッシュみてくれるのかな
+        //     if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->remember)) { // 組み込みLoginControllerを使用する場合、このコントローラが使用しているトレイトにより、"remember"ユーザーを確実に処理するロジックが実装済み
         if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){ // , 'active' => 1 とかにして有無効を管理
                 return redirect()->intended('home');
             }
             $message_bag->add('error', 'This is the error message');
             // dd($message_bag);
         //return redirect('login')->withInput($request->input())->with(['message'=>'Wrong username/password combination']); // session()->get('message') で取得
-        return redirect('login')->withInput($request->input())->withErrors($message_bag);
+        // return redirect('login')->withInput($request->input())->withErrors($message_bag);
+        return redirect('login')->withInput($request->input())->withErrors($message_bag, 'login'); // {{ $error->login->first('error')}}
         // ->withFlashMessage('Wrong username/password combination.'); // flash_message でアクセス可
     }
 
