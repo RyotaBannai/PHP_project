@@ -11,7 +11,7 @@ class ReadPolicy
     use HandlesAuthorization;
 
     /**
-     * Determine whether the user can view any models.
+     * Determine whether the user can emails any models.
      *
      * @param  \App\User  $user
      * @return mixed
@@ -22,7 +22,7 @@ class ReadPolicy
     }
 
     /**
-     * Determine whether the user can view the model.
+     * Determine whether the user can emails the model.
      *
      * @param  \App\User  $user
      * @param  \App\Read  $read
