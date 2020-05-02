@@ -38,11 +38,11 @@ return [
             'transport' => 'smtp',
             'host' => env('MAIL_HOST', 'smtp.mailgun.org'),
             'port' => env('MAIL_PORT', 587),
-//            'from' => [
-//                //ここの設定を追加
-//                'address' => env('MAIL_FROM_ADDRESS', null),
-//                'name' => env('MAIL_FROM_NAME', null)
-//            ],
+            'from' => [
+                //ここの設定を追加
+                'address' => env('MAIL_FROM_ADDRESS', null),
+                'name' => env('MAIL_FROM_NAME', null)
+            ],
             'encryption' => env('MAIL_ENCRYPTION', 'tls'),
             'username' => env('MAIL_USERNAME'),
             'password' => env('MAIL_PASSWORD'),
@@ -104,7 +104,7 @@ return [
     */
 
     'markdown' => [
-        'theme' => 'default',
+        'theme' => 'default', // もし変えたい場合は新しくcssを作成
 
         'paths' => [
             resource_path('views/vendor/mail'),

@@ -26,4 +26,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(['middleware'=>'web'], function(){
    Route::auth();
    Route::get('/home', 'HomeController@index');
+   Route::get('/showmail', function(){
+       return new App\Mail\OrderShipped();
+   });
 });

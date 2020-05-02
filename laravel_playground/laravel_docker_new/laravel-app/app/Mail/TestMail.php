@@ -30,8 +30,17 @@ class TestMail extends Mailable
     {
         #return $this->emails('emails.name');
         return $this
-            ->from("ryotabanani0528@gmail.com")
+            //->from("ryotabanani0528@gmail.com") // required to add sender's address, or define .env file
             ->subject('Test Completed!')
             ->view('emails.test');
+        //-> ファイルシステムのディスクへファイルを保存してあり、それをメールに添付する場合attachFromStorage　を使う
+        //->attachFromStorage('/path/to/file', 'name.pdf', [
+        //'mine' => 'application/pdf'
+        //];)
+        // ->attachFromStorageDisk('s3', '/path/to/file'); // storageにs3を使っていれば。
+
+        //遅延送信
+        //$when = Carbon\Carbon::now(0->addMinutes(10);
+        //Mail::to('ryotala0528@gmail.com')->later($when, new App\Mail\TestMail());
     }
 }
