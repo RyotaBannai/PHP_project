@@ -1,0 +1,1 @@
+Your id is: {{ $user }}

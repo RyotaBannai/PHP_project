@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Policies\PostPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Auth\Access\Response;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -13,7 +15,8 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         // 'App\Model' => 'App\Policies\ModelPolicy',
-        Post::class => PostPlicy::class,
+        Post::class => PostPolicy::class,
+        User::class => UserPolicy::class,
     ];
 
     /**
@@ -26,5 +29,16 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
         // Gate::guessPolicyNamesUsing
 
+        //確かにRouteっぽい
+        Gate::define('update-post', function($user, $post){
+           return $user->id === $post->user_id;
+        });
+        Gate::define('update-post-by-friends', function($user, $post){
+            return $user->id === $post->author_id
+                ? Response::allow( 'you\'re a friends of the author, so you have a right to update.' )
+                : Response::deny( 'sorry you don\'t right to update');
+        });
+        Gate::define('update-delete',
+            'App\Policies\PostPolicy@delete');
     }
 }
