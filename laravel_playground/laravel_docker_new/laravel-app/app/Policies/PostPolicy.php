@@ -19,7 +19,10 @@ class PostPolicy
             ? Response::allow()
             : Response::deny('You do not own this post.');
     }
-    public function create(Usr $user){ // Modelメソッドは必要ない。どの様なユーザーを認可するかをAuthなどで判定
+    public function create(User $user){
+
+        // createのように、モデルインスタンスを受け取らないポリシーメソッドを定義する場合は、モデルインスタンスを受け取る必要は無い
+        // Modelメソッドは必要ない。どのユーザーを認可するかをAuthで判定
 
     }
 }

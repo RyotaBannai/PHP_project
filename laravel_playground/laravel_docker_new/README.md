@@ -97,21 +97,38 @@ Auth::logoutOtherDevices($password);
 ```
 - loginルートに対するルート名をカスタマイズしながら、AuthenticateSessionミドルウェアを使用している場合は、アプリケーションの例外ハンドラにあるunauthenticatedメソッドをオーバーライドし、ログインページへユーザーを確実にリダイレクトさせる。loginルートはデフォルトで実装されてる.
 ### Policy
+- **ポリシーの登録**: 指定したモデルに対するアクションの認可時に、どのポリシーを利用するかをLaravelへ指定すること
 - ポリシーの名前は対応するモデルの名前へ、Policyサフィックスを付けたものにする必要がある。Userモデルに対応させるには、`UserPolicy`クラスと命名.
 - `AuthServiceProvider`中で明確にマップされたポリシーは、自動検出される可能性のあるポリシーよりも優先的に扱われる。
 - ポリシーから認可レスポンスを返す場合、`Gate::allows`メソッドはシンプルな論理値を返す。しかし、ゲートから完全な認可レスポンスを取得するには、`Gate::inspect`メソッドを使用。 Gate は認証でPolicy は認可。
-- ゲストユーザー: HTTPリクエストが認証済みユーザーにより開始されたものでなければ、すべてのゲートとポリシーは自動的にデフォルトとしてfalseを返す。しかし、**「オプショナル」** なタイプヒントを宣言するか、ユーザーの引数宣言にnullデフォルトバリューを指定することで、ゲートやポリシーに対する認可チェックをパスさせることができる。
+- HTTPリクエストが認証済みユーザーにより開始されたものでなければ（つまりゲストユーザーの場合）、すべてのゲートとポリシーは自動的にデフォルトとして`false`を返す。しかし、**「オプショナル」** なタイプヒントを宣言するか、ユーザーの引数宣言に`null`デフォルトバリューを指定することで、ゲートやポリシーに対する認可チェックをパスさせることができる。
 ```php
 public function update(?User $user, Post $post) // $user = null
     {
         return optional($user)->id === $post->user_id;
     }
 ```
-- update policyを呼び出す。policyがなければgateを探索.
+- 指定するモデルのポリシーが登録済みであれば適切なポリシーの`can`メソッドが自動的に呼びだされ、論理型の結果が返される。そのモデルに対するポリシーが登録されて**いない**場合、`can`メソッドは指定したアクション名に合致する、**ゲートベースのクロージャ**を呼ぶ。
 ```php
-if ($user->can('update', $post)) {
+if ($user->can('update', $post)) { 
     //
 }
+```
+- モデルを必要としないアクションの場合は、`モデルのクラス名`を渡す。これでどのモデルのupdateのPolicyかを識別できる。
+```php
+if ($user->can('update', Post::class)) { 
+    //
+}
+```
+- policyに引数を渡すときは配列で渡す
+```php
+public function update(Request $request, Post $post)
+{
+    $this->authorize('update', [$post, $request->input('category')]);
+
+    // 現在のユーザーは、このブログポストを更新できる…
+}
+
 ```
 - 認可はmiddleware, Controller ($this->authorize())  にも実装できる。
 ### 認証系
