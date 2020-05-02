@@ -184,6 +184,30 @@ protected function parseMarkdownToHtml(string $text)
 1. メールを送信する代わりに、logメールドライバで、すべてのメールメッセージを確認のためにログファイルへ書き込こむ。
 2. `config/mail.php` の to の設定を変更して全てのメールを送信する先を変更する。
 3. 最後の方法はMailtrapのようなサービスを使い、smtpドライバで本当のメールクライアントにより内容を確認できる「ダミー」のメールボックスへメールメッセージを送る方法
+### メールの確認
+- オリジナルの画面を使用したい場合のステップ
+- Overwrite `App\User@sendEmailVerificationNotification` method like following
+```php
+public function sendEmailVerificationNotification()
+{
+    $this->notify(new \App\Notifications\VerifyEmailJapanese);
+}
+```
+- hit the `php artisan make:notification VerifyEmailJp`
+- `app\Notifications\VerifyEmailJapanese.php` にメール送信内容をmarkdownで書く
+```php
+public function toMail($notifiable)
+{
+    return (new MailMessage)
+        ->subject(Lang::getFromJson('登録確認メール'))
+        ->markdown('emails.verifyemail', [
+            'url' => $this->verificationUrl($notifiable), 
+            'user' => $notifiable
+    ]);
+}
+```
+- then edit `emails.verifyemail.blade`
+
 ### Go find learn list
 - https://laraveldaily.teachable.com/p/export-import-with-excel-in-laravel
 - https://readouble.com/laravel/7.x/ja/queues.html
