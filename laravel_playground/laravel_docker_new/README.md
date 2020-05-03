@@ -67,8 +67,8 @@ login.blade.php
 ```
 
 ### Guard
-- The Auth facade uses the 'web' guard by default if none is specified. So for example: Auth::user() is doing this by default: Auth::guard('web')->user()
-- The other auth driver out of the box called 'api'. So for example you can call your middleware like this: $this->middleware('auth:api'); This will check that the user is authenticated by api_token instead of session. You would use this if your application has an API endpoint allowed for logged in users only. then a user can make a request like yourapp.com/api-method?api_token=blahblah.
+- The Auth facade uses the `web` guard by default if none is specified. So for example: `Auth::user()` is doing this by default: `Auth::guard('web')->user()`
+- The other auth driver out of the box called `api`. So for example you can call your middleware like this: `$this->middleware('auth:api');` This will check that the user is authenticated by api_token instead of session. You would use this if your application has an API endpoint allowed for logged in users only. Then a user can make a request like `yourapp.com/api-method?api_token=blahblah`.
 ```php
 Auth::guest()  // is a opposit of Auth:check()
 Auth::check() 
@@ -218,3 +218,32 @@ php artisan route:clear
 php artisan config:clear
 php artisan cache:clear
 ```
+### 暗号化、シリアライズ
+- `decrypt(encrypt(['Hello world.', 'hshshs']));` 暗号化の過程でシリアライズされるため、配列やオブジェクトも暗号化も可能。
+- シリアライズせずに値を暗号化／復号したい場合 `Crypt::decryptString(Crypt::encryptString('Hello world.'));`
+### password reset (パスワードリマインダの送信)
+- Laravelのパスワードリセット機能を使用開始する前に、ユーザーが`Illuminate\Notifications\Notifiable`トレイトを使用していること.
+- 複数のユーザーテーブルに対するパスワードをリセットするために使用する(マルチ認証)、別々のパスワード「ブローカー」をauth.phpファイルで設定できる。
+```php
+//config/auth.php
+'passwords' =>[
+    // 追加 
+    'admins' => [
+                'provider' => 'admins',
+                'table' => 'password_resets',
+                'expire' => 60,
+            ],
+]
+// デフォルトのResetPasswordControllerを使ってAdmin用のコントローラを作って、brokerをoverwrite
+public function broker()
+{
+    return \Password::broker('admins');
+}
+// 同じようにして、ForgetPasswordControllerも作って、brokerを変更
+{
+    return \Password::broker('admins');
+}
+```
+- 参照 https://readouble.com/laravel/7.x/ja/passwords.html
+- https://qiita.com/uenoryo/items/34077c7d39660009672c
+- 要はauth.phpでusers の他にadminなどを指定してあげれば、userモデル以外をエントリポイントとして見てくれるので、それに合わせてresetパスワードなどのnotificatio をカスタマイズする。
