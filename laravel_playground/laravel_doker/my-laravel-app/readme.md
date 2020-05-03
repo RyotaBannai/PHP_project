@@ -255,7 +255,7 @@ $phone = User::find(1)->phone; // 1vs 1　
 - 何が嬉しいか: phone テーブルを触らなくていい = user テーブルだけ使える
 - 逆の関係の定義では`belongTo('App\User')`を使う. _idのサフィックスとテーブル名と一致するidを探す。ここでは Userなのでuser_idとUserテーブルのidをみる. user が存在しない時の処理は `withDefault()`
 - 1 vs 多数の場合　twitterなどの場合は `hasMany()`
-- i vs 多数（Inverse）の場合　記事のブックマークやいいね！の梅は`belong**s**To()`
+- i vs 多数（Inverse）の場合　記事のブックマークやいいね！の場合は belong**s**To()
 - 多数 vs 多数　の場合　ユーザーのロール. `belongsToMany()` で３つテーブルが必要. users とroles とrole_user(中間テーブル). このuser_roleにはuser_id, role_idが含まれている必要がある. `belongsToMany('Models\Role, 'role_user', 'user_id', 'role_id')` がdefault.
 ### has many through 
 - 一つのテーブル経由で複数のレコードを取得.
@@ -277,6 +277,26 @@ $books->load('author');
 - https://qiita.com/ryo2132/items/63ced19601b3fa30e6de
 ### Eloquent コレクション
 - ほとんどのEloquentコレクションは新しいEloquentコレクションのインスタンスを返す(`Illuminate\Database\Eloquent\Collection`)が、pluck、keys、zip、collapse、flatten、flipメソッドはベースのコレクションインスタンスを返す(`Illuminate\Support\Collection`)。Eloquentモデルをまったく含まないコレクションを返すmap操作のような場合、自動的にベースコレクションへキャストされる。
+- `concat` ignores keys
+- `filter` ignore any falsy values like `empty , 0, null, false, []`  
+- the second value of filter is for key.
+```php
+filter(function($value, $key){`
+    return $key > 2; 
+});
+```
+- `mapWithKeys(function($items){ return [key=> value]})` is useful
+- `isEmpty()` checks whether an array has an item or not, which means even falsy value in it, `isEmpty()` returns false always. only `[]` is true.  `isNotEmpty()` returns true. 
+- `Collection::times()` allows you to granular control of `factory`.
+```php
+return Collection::times(3, function($value){
+    return factory(User::class)->make([
+        'name' => "{$value} cool name",    
+    ]);
+})->toArray();
+- `toArray()` transforms from all dimensions of collection to array. however, `all()` does only the first dimension.
+- `toJson()` returns Json. 
+```
 ### Blade
 - https://www.larashout.com/12-awesome-laravel-blade-directives-to-try-today
 - @include は親blade　から子bladeに後から変数を渡したい時に使う。header componentにタイトル名を渡す時とか。
@@ -306,3 +326,10 @@ Route::post('/unsubscribe/{user}', function (Request $request) {
 ### Middleware 
 -  `app\Providers\RouteServiceProvider`により、`routes/web.php`ファイルでは、webミドルウェアグループが自動的に適用されている。
 - **handleとterminateメソッドの呼び出しで同一のミドルウェアインスタンスを使用したい場合**は、コンテナのsingletonメソッドを使用し、ミドルウェアを登録する。通常、`AppServiceProvider.php`のregisterメソッドの中で登録。
+### Two ways to test out methods
+1. make commands by hitting something like `php artisan make:command CollectionComamnd` and add this class to `Console\Kernel.php`. After that, edit `CollectionCommand@handle` to specify what actions you want trigger when hitting the command. it's always good idea to use with `clear` command like `clear && php artisan collection:example`.
+2. use shell script something like below and run it. when you want to reload scripts hit `control-D` and if you want to quit, hit `control-C`.
+```shell script
+#!/bin/sh
+while true; do php artisan tinker; done
+```
