@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Playground\ExampleCollection;
+use App\Playground\ExampleCollection2;
 
 class CollectionComamnd extends Command
 {
@@ -38,6 +38,6 @@ class CollectionComamnd extends Command
      */
     public function handle()
     {
-        return (new ExampleCollection)->main();
+        return (new ExampleCollection2)->main();
     }
 }

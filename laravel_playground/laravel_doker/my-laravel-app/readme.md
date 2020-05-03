@@ -297,6 +297,10 @@ return Collection::times(3, function($value){
 - `toArray()` transforms from all dimensions of collection to array. however, `all()` does only the first dimension.
 - `toJson()` returns Json. 
 ```
+- collection メソッドを使うときは オリジナルコレクション を変更する（コレクション自身を更新）のか新しいコレクションを作るのかに注意する。
+- `union`: 指定した配列をコレクションへ追加する。既にコレクションにあるキーが、オリジナル配列に含まれている場合は、オリジナルコレクションの値が優先される。
+- `search` 値を探索して、key をリターン
+- `split` と `chunk`はcollectionを分割するという点で似ているが、`chunk`は指定した数値で分割できない場合blows up. `split`は残りは残りだけでarrayを作る。
 ### Blade
 - https://www.larashout.com/12-awesome-laravel-blade-directives-to-try-today
 - @include は親blade　から子bladeに後から変数を渡したい時に使う。header componentにタイトル名を渡す時とか。
