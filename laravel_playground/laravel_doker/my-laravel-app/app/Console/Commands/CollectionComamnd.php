@@ -42,7 +42,6 @@ class CollectionComamnd extends Command
     public function handle()
     {
         # return (new ExampleCollection2)->main();
-        $result = new UserResource(User::find(1));
-        dd($result);
+        dump(User::find(1)->attributesToArray());
     }
 }

@@ -7,7 +7,7 @@ class SayHi extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        // ここにservice provderでbindしたキーを返す.
+        // ここにservice providerでbindしたキーを返す.
         return 'sayhi';
     }
 }

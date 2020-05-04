@@ -358,6 +358,52 @@ $users = User::select([
 'posts' => PostResource::collection($this->whenLoaded('posts')), //リレーションがロードされていれば追加。
 ```
 - トップレベルメタデータ の追加`with`
+- hotexamples: https://hotexamples.com/examples/illuminate.database.query/Builder/macro/php-builder-macro-method-examples.html
+### Eloquentシリアライズ
+- EloquentモデルがJSONへ変換される場合、JSONオブジェクトへ属性として**自動的に**リレーションがロードされる。（ロードしたく無い場合は下記の`$hidden`を参照。）また、Eloquentのリレーションメソッドは「**キャメルケース**」で定義するが、リレーションのJSON属性は「**スネークケース**」になる。
+- モデルから変換する配列やJSONに、パスワードのような属性を含めたくない場合がある。それにはモデルの`$hidden`プロパティに定義を追加する。
+```php
+namespace App;
+use Illuminate\Database\Eloquent\Model;
+class User extends Model
+{
+    /**
+     * 配列に含めない属性
+     *
+     * @var array
+     */
+    protected $hidden = ['password'];
+    
+    // または含める物だけを$visibleに指定する
+    /**
+     * 配列中に含める属性
+     *
+     * @var array
+     */
+    protected $visible = ['first_name', 'last_name'];
+
+}
+```
+- リレーションを含めない場合は、メソッド名を`$hidden`に指定。
+- **プロパティ配列出力管理の一時的変更**： 特定のモデルインスタンスにおいて、通常は配列に含めない属性を含めたい場合は、`makeVisible`メソッドを使う。このメソッドは、メソッドチェーンしやすいようにモデルインスタンスを返す。
+```php
+   return $user->makeVisible('attribute')->toArray();
+   return $user->makeHidden('attribute')->toArray();
+```
+- 
+- データベースに無いカラムを追加したい場合、キャメルケースでアクセサを作って、モデルの$appends プロペティにスネークケースで追加する。
+```php
+public function getIsAdminAttribute()
+{
+    return $this->attributes['admin'] === 'yes';
+}
+/**
+ * モデルの配列形態に追加するアクセサ
+ *
+ * @var array
+ */
+protected $appends = ['is_admin'];
+```
 ### Blade
 - https://www.larashout.com/12-awesome-laravel-blade-directives-to-try-today
 - @include は親blade　から子bladeに後から変数を渡したい時に使う。header componentにタイトル名を渡す時とか。

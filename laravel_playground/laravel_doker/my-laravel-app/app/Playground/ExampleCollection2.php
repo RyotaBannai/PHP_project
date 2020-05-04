@@ -1,9 +1,9 @@
 <?php
 namespace App\Playground;
 use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Str;
 use App\Models\User;
+use App\Builder\CustomBuilder;
 
 class ExampleCollection2
 {
@@ -37,17 +37,7 @@ class ExampleCollection2
             });
         });
 
-//        Collection::macro('getOrFail', function ($columns = ['*']) {
-//            //dd($columns);
-//            $models = $this->get($columns);
-//            if (count($models)) {
-//                return $models;
-//            }
-//            throw (new ModelNotFoundException)->setModel(get_class($this->model));
-//        });
-
-
         $data["myStr"]->toUpper()->dump();
-//        User::get()->getOrFail();
+        User::get()->getOrFail();
     }
 }

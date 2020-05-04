@@ -58,6 +58,7 @@ Route::prefix('users')->group(function(){
     Route::get('/', 'UserController@index');
     Route::get('name', 'UserController@name');
     Route::get('resource', function(){
+        // return new UserCollection(User::all());
         return new UserCollection(User::all());
     });
 });
