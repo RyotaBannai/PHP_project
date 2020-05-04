@@ -301,6 +301,44 @@ return Collection::times(3, function($value){
 - `union`: 指定した配列をコレクションへ追加する。既にコレクションにあるキーが、オリジナル配列に含まれている場合は、オリジナルコレクションの値が優先される。
 - `search` 値を探索して、key をリターン
 - `split` と `chunk`はcollectionを分割するという点で似ているが、`chunk`は指定した数値で分割できない場合blows up. `split`は残りは残りだけでarrayを作る。
+### 
+- model の `$dates` プロパティにカラム名をセットしておけば、デフォルトで`Carbon`インスタンスにキャストされるため、どのそソッドでも使えるようになる。これはデータベースにはdatatimedで保存されているが、取り出し時に`Carbon`インスタンスにキャストされる。
+- `$casts`にキャストしたいカラムを指定することもできる。同様にデータベースに保存してる内容を取り出した時にキャストする。`is_admin`が`0 or 1`で保存されていて取り出した時に`false or true`へキャストされる。
+```php
+protected $casts = [
+        'is_admin' => 'boolean',
+    ];
+```
+- オブジェクトのキャスト：これはモデルのインスタンスを取り出した時に整形し直す感じ。
+- キャストする時にパラメータが必要な場合がある、例えば`Hash::class`の場合どのアルゴリズムを使うか指定が必要。この場合`：`を使用。複数のパラメータが必要なら、`,`で区切る。
+```php
+protected $casts = [
+    'secret' => Hash::class.':sha256',
+];
+```
+- モデルにカスタムキャストを指定する代わりに、`Illuminate\Contracts\Database\Eloquent\Castable`インターフェイスを実装するクラスを指定することも可能.
+```php
+namespace App;
+use Illuminate\Contracts\Database\Eloquent\Castable;
+use App\Casts\Address as AddressCast;
+class Address implements Castable
+{
+    public static function castUsing()
+    {
+        return AddressCast::class; // Casts\ で別に定義
+    }
+}
+- クエリ結果のキャストを`withCasts`でやる。
+- というよりこの`select`の使い方をして、全クエリ結果を取ってきてimpodeみたいなキャストを追加すれば、キャスト結果でorderBy(last_posted_at)で一気にソートまでできる。
+```php
+$users = User::select([
+    'users.*',
+    'last_posted_at' => Post::selectRaw('MAX(created_at)')
+            ->whereColumn('user_id', 'users.id')
+])->withCasts([
+    'last_posted_at' => 'datetime'
+])->get();
+```
 ### Blade
 - https://www.larashout.com/12-awesome-laravel-blade-directives-to-try-today
 - @include は親blade　から子bladeに後から変数を渡したい時に使う。header componentにタイトル名を渡す時とか。
@@ -337,3 +375,19 @@ Route::post('/unsubscribe/{user}', function (Request $request) {
 #!/bin/sh
 while true; do php artisan tinker; done
 ```
+### phpbrew: php version control.
+- _installating phpbrew_ https://github.com/phpbrew/phpbrew/wiki/Quick-Start
+```shell script
+curl -L -O https://github.com/phpbrew/phpbrew/raw/master/phpbrew
+chmod +x phpbrew
+
+# Move phpbrew to somewhere can be found by your $PATH
+sudo mv phpbrew /usr/local/bin/phpbrew
+phpbrew init
+```
+- update package. `phpbrew update`
+- install specific version. `phpbrew --debug install --stdout 7.0 as 7.0-dev +default +intl`
+- list of version. `phpbrew list`
+- use temporarily `phpbrew use [version`
+- use a default `phpbrew switch [version`
+- and let use php 7.4

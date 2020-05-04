@@ -34,10 +34,18 @@ class User extends Authenticatable
      * @var array
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        'email_verified_at' => 'datetime', //  'datetime:Y-m-d' 日付のフォーマットも指定できる
+        // 'options' => 'array', // options属性 がjson形式にシリアライズされている時に、取り出し時点で自動でarray型にキャスト
+                                //options属性へ値をセットすると配列は保存のために自動的にJSONへシリアライズ
     ];
 
     public function getData(){
         return $this->name.': '.$this->email;
+    }
+
+    // accssor $this->first_name;
+    public function getNameAttribute($value)
+    {
+        return ucfirst($value);
     }
 }

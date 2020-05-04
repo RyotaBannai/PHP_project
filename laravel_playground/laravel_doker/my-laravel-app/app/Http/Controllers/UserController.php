@@ -61,6 +61,7 @@ class UserController extends Controller
     }
     public function userList(Request $req){
         $users = User::all();
+        $users = User::all();
         $id = $req->input('id') ?? null;
 
         if (isset($id)){
@@ -82,5 +83,10 @@ class UserController extends Controller
                 ['users' => $names]
             );
         }
+    }
+    public function name()
+    {
+        $user = User::find(1);
+        return $user->name;
     }
 }
