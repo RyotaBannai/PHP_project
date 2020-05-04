@@ -6,6 +6,10 @@ use Illuminate\Support\Facades\URL;
 // プロバイダーで利用できるようになったサービスを利用
 use App\Services\MyUtil; // サービス（Utilクラス）のエイリアスを作成
 
+use App\Models\User;
+use App\Http\Resources\User as UserResource;
+use App\Http\Resources\UserCollection ;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -53,6 +57,9 @@ Route::prefix('users')->group(function(){
     Route::post('out', 'UserController@userOut')->name('user.out');
     Route::get('/', 'UserController@index');
     Route::get('name', 'UserController@name');
+    Route::get('resource', function(){
+        return new UserCollection(User::all());
+    });
 });
 
 Route::get('/logging','LogController@index');

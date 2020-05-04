@@ -339,6 +339,25 @@ $users = User::select([
     'last_posted_at' => 'datetime'
 ])->get();
 ```
+### APIリソース
+- リソースの本質はシンプル: **特定のモデルを配列に変換する**必要があるだけである。
+- JSONへ変換する必要のある属性の配列を返す、`toArray`メソッドを定義
+- **同期的な**API処理ならこれを使う。
+- 条件付き属性: ユーザーが"administrator"の場合のみ、ある値を含めたいとき. `$this->when(...)` を使う。
+- 条件付き属性のマージ: 
+```php
+'email' => $this->email,
+        $this->mergeWhen(Auth::user()->isAdmin(), [
+            'first-secret' => 'value',
+            'second-secret' => 'value',
+        ]),
+ ...
+```
+- 条件付きリレーション: モデルインスタンスに他のモデル（リレーション）がロードされてる場合その他のモデルインスタンスを追加する。これはコントローラーでロードするか決めればあとは、リソースが適当に処理する。
+```php
+'posts' => PostResource::collection($this->whenLoaded('posts')), //リレーションがロードされていれば追加。
+```
+- トップレベルメタデータ の追加`with`
 ### Blade
 - https://www.larashout.com/12-awesome-laravel-blade-directives-to-try-today
 - @include は親blade　から子bladeに後から変数を渡したい時に使う。header componentにタイトル名を渡す時とか。

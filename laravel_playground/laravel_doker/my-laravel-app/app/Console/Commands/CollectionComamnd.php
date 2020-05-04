@@ -4,6 +4,9 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Playground\ExampleCollection2;
+use App\Models\User;
+use App\Http\Resources\User as UserResource;
+
 
 class CollectionComamnd extends Command
 {
@@ -38,6 +41,8 @@ class CollectionComamnd extends Command
      */
     public function handle()
     {
-        return (new ExampleCollection2)->main();
+        # return (new ExampleCollection2)->main();
+        $result = new UserResource(User::find(1));
+        dd($result);
     }
 }

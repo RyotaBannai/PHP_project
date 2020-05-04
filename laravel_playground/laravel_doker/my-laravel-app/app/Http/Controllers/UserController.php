@@ -61,7 +61,6 @@ class UserController extends Controller
     }
     public function userList(Request $req){
         $users = User::all();
-        $users = User::all();
         $id = $req->input('id') ?? null;
 
         if (isset($id)){
