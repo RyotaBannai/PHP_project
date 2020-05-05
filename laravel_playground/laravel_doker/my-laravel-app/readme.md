@@ -456,3 +456,38 @@ phpbrew init
 - use temporarily `phpbrew use [version`
 - use a default `phpbrew switch [version`
 - and let use php 7.4
+### The diffs bt with() and load()
+- https://stackoverflow.com/questions/26005994/laravel-with-method-versus-load-method
+### Event
+- オブザーバーパターン: 監視する側(リスナー)と監視される側(イベント)に分けて、イベントの変化をリスナーが受け取って処理をする。
+- 一つのイベントは、互いに依存していない**複数**のリスナに紐付けられますので、**アプリケーションのさまざまな要素を独立させるための良い手段**として活用できます。
+- 注文を配送するごとにSlack通知をユーザーへ届けたいとします。注文の処理コードとSlackの通知コードを**結合する代わりに**、OrderShipped**イベントを発行**し、**リスナがそれを受け取り、Slack通知へ変換するように実装**できます。
+- 初めに `EventServiceProvider.php` にイベントとリスナを登録する。
+- それから `php artisan event:generate` で自動でイベント、リスナを生成する。
+```php
+'App\Events\OrderShipped' => [
+          'App\Listeners\SendShipmentNotification',
+        ],
+```
+- `EventServiceProvider`の`boot`にロージャベースリスナを登録できる。
+- `Event Discovery` 自分でイベントとリスナを登録しなくても、laravelが（リフレクションを使い）`Listeners` ディレクトリを探索（スキャン）して解決してくれる。そして見つけ出したら、`EventServiceProvider`に自ら登録する。
+- イベントのhandleメソッドにDIしたタイプヒントを元に`Listeners`を探索。
+- イベントディスカバリはデフォルトで無効。アプリケーションの`EventServiceProvider`にある`shouldDiscoverEvents`をオーバーライドすることで、有効にする。
+- アプリケーションの`Listeners`ディレクトリ中の全リスナが、デフォルトでスキャンされる。 スキャンする追加のディレクトリを定義したい場合は、EventServiceProviderの`discoverEventsWithin`をオーバーライドする。
+```php
+protected function discoverEventsWithin()
+{
+    return [
+        $this->app->path('Listeners'),
+    ];
+}
+```
+- 実働時はリクエストのたびに、すべてのリスナをフレームワークにスキャンさせるのは好ましくない。アプリケーションのイベントとリスナの全目録をキャッシュする、`event:cache` Artisanコマンドを実行すべき。この目録はフレームワークによるイベント登録処理をスピードアップするために使用される。`event:clear`コマンドにより、このキャッシュは破棄される。
+- `event:list`コマンドで、アプリケーションに登録されたすべてのイベントとリスナを一覧表示。
+- イベントリスナはイベントインスタンスをhandleメソッドで受け取る。
+- イベントの伝播の停止: 場合によりイベントが他のリスナへ伝播されるのを止めたいこともあります。その場合はhandleメソッドからfalseを返してください。
+- ShouldQueueトレイトを使うだけで、リスナがイベントのために呼び出されると、Laravelのキューシステムを使い、イベントデスパッチャーにより自動的にキューへ投入される。キューにより実行されるリスナから例外が投げられなければ、そのキュージョブは処理が済み次第、自動的に削除される。
+- `Dispatchable`：イベントを発火させる(ディスパッチ)ときに利用
+- `InteractsWithSockets`：socket.ioを使用したイベント通知時利用
+- `SerializesModels`：キューと組み合わせて非同期イベントを発火させるためのもの
+- ログイン、ログアウトなどの同じ分類の処理をリスナーにやらせたい時には、`Subscriber` を使う。

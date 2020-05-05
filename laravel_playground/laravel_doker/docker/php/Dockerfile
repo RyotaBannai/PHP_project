@@ -14,5 +14,6 @@ RUN apt-get update \
 && docker-php-ext-install pdo_mysql pdo_pgsql \
 && nodejs npm
 
+RUN docker-php-ext-install pcntl
 
 WORKDIR /var/www/html

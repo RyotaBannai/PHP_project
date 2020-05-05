@@ -15,8 +15,13 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
+        // 全イベント（キー）とリスナ（値）
         Registered::class => [
             SendEmailVerificationNotification::class,
+        ],
+        'App\Events\OrderShipped' => [
+            App\Listeners\SendShipmentNotification::class,
+            App\Listeners\SendByQueue::class,
         ],
     ];
 
@@ -29,6 +34,11 @@ class EventServiceProvider extends ServiceProvider
     {
         parent::boot();
 
-        //
+        Event::listen('event.name', function ($a, $b){
+           // do something.
+        });
+        Event::listen('event.*', function($a, $b){
+            // the same procedure for associated with the same listener.
+        });
     }
 }
