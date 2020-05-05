@@ -7,13 +7,12 @@ RUN apt-get update \
 git \
 zip \
 unzip \
-vim
-
-RUN apt-get update \
-&& apt-get install -y libpq-dev \
-&& docker-php-ext-install pdo_mysql pdo_pgsql \
-&& nodejs npm
-
-RUN docker-php-ext-install pcntl
+vim \
+libpq-dev \
+nodejs npm \
+supervisor \
+&& docker-php-ext-install pdo_mysql pdo_pgsql pcntl \
+&& mkdir -p /etc/supervisor/conf.d \
+&& touch /var/run/supervisor.sock && chmod 777 /var/run/supervisor.sock
 
 WORKDIR /var/www/html

@@ -498,4 +498,6 @@ protected function discoverEventsWithin()
 - `php artisan queue:work --queue=high,low`とすればhighキューが先に処理されるようになるため、優先度がと高い処理をこのキューを使うようにディスパッチする。`dispatch((new Job)->onQueue('high'));`
 - ジョブの有効期限: 処理中のジョブを再試行するまで何秒待つか。もし有効期限が90秒でジョブが90秒たっても完了しないときは、キューに再投入される。この有効期限を`config/queue.php` の`retry_after`で設定する。Amazon SQSはAWSコンソールで管理。
 - 子のキューワーカのタイムアウトは`--timeout=60`のように設定。
-
+#### Supervisor
+- 一番時間がかかるジョブが消費する秒数より大きな値を`stopwaitsecs`へ必ず指定
+-  `service supervisor start` で走らせる。

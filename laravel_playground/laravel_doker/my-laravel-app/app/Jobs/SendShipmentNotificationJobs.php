@@ -32,6 +32,6 @@ class SendShipmentNotificationJobs implements ShouldQueue
      */
     public function handle() // OrderShipped $event
     {
-        Log::info('Queue!');
+        Log::info('Queue Changed！');
     }
 }
