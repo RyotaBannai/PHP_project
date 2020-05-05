@@ -495,9 +495,12 @@ protected function discoverEventsWithin()
 - キューワーカは長時間起動するプロセスで、メモリ上にアプリケーション**起動時の状態を保存している**ことを記憶にとどめてください。そのため、**開発段階ではキューワーカの再起動を確実に実行してください**。付け加えて、アプリケーションにより生成、もしくは変更された**静的な状態**は、ジ`ョブ間で自動的にリセットされない`ことも覚えておきましょう。コードを修正したら `php artisan queue:listen` は更新したコードをリロード、もしくはプリケーションの状態をリセットしたい場合に、手動でワーカをリスタートする必要がなくなる。
 - `nohup php artisan queue:work --daemon &` バックグラウンドでワーカーを起動。`nohup.out` をカレントディレクトリに作成してログをする。
 - email キューのみ処理を行いたいときは、`php artisan queue:work redis --queue=emails`のように指定する。
-- `php artisan queue:work --queue=high,low`とすればhighキューが先に処理されるようになるため、優先度がと高い処理をこのキューを使うようにディスパッチする。`dispatch((new Job)->onQueue('high'));`
+- `php artisan queue:work --queue=high,low`とすればhighキューが先に処理されるようになるため、優先度がと高い処理をこのキューを使うようにディスパッチする。`dispatch((new Job)->onQueue('high'));`php artisan queue:retry 5
 - ジョブの有効期限: 処理中のジョブを再試行するまで何秒待つか。もし有効期限が90秒でジョブが90秒たっても完了しないときは、キューに再投入される。この有効期限を`config/queue.php` の`retry_after`で設定する。Amazon SQSはAWSコンソールで管理。
 - 子のキューワーカのタイムアウトは`--timeout=60`のように設定。
+- ジョブ失敗イベント: `Queue::failing` を`AppServiceProvider`のbootに追加する。
+- ジョブ失敗イベントの確認: `php artisan queue:failed`
+- 実行 `php artisan queue:retry 5` 
 #### Supervisor
 - 一番時間がかかるジョブが消費する秒数より大きな値を`stopwaitsecs`へ必ず指定
 -  `service supervisor start` で走らせる。
