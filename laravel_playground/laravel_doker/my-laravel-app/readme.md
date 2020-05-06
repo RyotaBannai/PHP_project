@@ -504,3 +504,17 @@ protected function discoverEventsWithin()
 #### Supervisor
 - 一番時間がかかるジョブが消費する秒数より大きな値を`stopwaitsecs`へ必ず指定
 -  `service supervisor start` で走らせる。
+### ブロードキャスト
+- Laravelでイベントをブロードキャストすることにより、サーバサイドのコードとクライアントサイドのJavaScriptで、同じ名前のイベントを共有することができる
+- イベントのブロードキャストは、すべてキュージョブとして行われるため、アプリケーションのレスポンスタイムにはシリアスな影響はでない
+- パブリック、もしくはプライベートに指定された「チャンネル」上で、イベントはブロードキャストされます。**アプリケーションの全訪問者**は、認証も認可も必要ない**パブリックチャンネル**を購入できます。しかし、**プライベートチャンネル**を購入するためには、認証され、そのチャンネルをリッスンできる**認可**が必要です。
+- 使用例：ユーザーに注文の発送状態を確認してもらうビューページがあるとしましょう。さらに、アプリケーションが発送状態を変更すると、`ShippingStatusUpdated`イベントが発行されるとしましょう。ユーザーがある注文を閲覧している時に、ビューの状態を変更するために、ユーザーがページを再読込しなくてはならないなんてしたくありません。代わりにアップデートがあることをアプリケーションへブロードキャストしたいわけです。
+- First of all, hit `php artisan make:event ShippingStatusUpdated`
+- `ShouldBroadcast`インターフェイスはイベントで、`broadcastOn`メソッドを定義することを求めています。
+- `PrivateChannel` には特定のユーザーのみが購読できるようにroutes/channels.php にルールを設定する。
+- **チャンネルの名前**と、ユーザーにそのチャネルをリッスンする認可があるかどうかを**trueかfalseで返すコールバック**です。
+```phpv
+Broadcast::channel('order.{orderId}', function ($user, $orderId) {
+    return $user->id === Order::findOrNew($orderId)->user_id;
+});
+```

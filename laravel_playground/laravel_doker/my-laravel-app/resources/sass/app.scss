@@ -1,31 +1,8 @@
-@use "sass:map";
-@use "sass:meta";
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Nunito');
 
-$width: 10px;
-$height: $width + 10px;
-$accent-color : #fbbc04;
-$font-family-monospace: Menlo, Consolas, "Courier New", monospace;
+// Variables
+@import 'variables';
 
-$message-colors:(
-    "alert": #ffff00 ,
-    "success": #0080ff ,
-    "info": #8000ff,
-    "default": var(--someColor),
-);
-
-
-:root{
-    --someColor : coral;
-    --accent-color-right: #{$accent-color};
-    --font-family-monospace: #{meta.inspect($font-family-monospace)};
-}
-
-.alert{
-    background-color: map.get($message-colors, "alert");
-}
-.success{
-    background-color: map.get($message-colors, "default");
-}
-.default {
-    background-color:  map.get($message-colors, "default"); ;
-}
+// Bootstrap
+@import '~bootstrap/scss/bootstrap';
