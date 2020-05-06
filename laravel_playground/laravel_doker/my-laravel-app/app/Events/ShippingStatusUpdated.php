@@ -15,22 +15,28 @@ class ShippingStatusUpdated implements ShouldBroadcast //
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $update; // 発送状態更新の情報
+    public $message;
 
-    public function __construct()
+    public function __construct($message)
     {
-        //
+        $this->message = $message;
     }
 
     public function broadcastOn()
     {
         // return new PrivateChannel('channel-name');
-        return new PrivateChannel('order.'.$this->update->order_id);
+        return ['my-channel'];
+    }
+
+    public function broadcastAs()
+    {
+        return 'my-event';
     }
 
     public function broadcastWith()
     {
         return [
-            'message' => 'PRIVATE',
+            'message' => $this->message,
         ];
    }
 }

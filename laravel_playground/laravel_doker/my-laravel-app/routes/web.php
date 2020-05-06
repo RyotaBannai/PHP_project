@@ -50,7 +50,10 @@ Route::get('/post/{user}/', 'RoutesController@sendAllParms')->name('comment.show
 Route::get('/sayhi','FacadeController@index');
 Route::get('/dojobs', 'SameFunctionsController@index');
 Route::get('/food', 'FoodController@index');
-Route::get('/ordered', 'OrderController@index');
+
+
+Route::get('/order', 'OrderController@order');
+Route::post('/ordered', 'OrderController@ordered');
 
 Route::prefix('users')->group(function(){
     Route::get('list', 'UserController@userList');

@@ -1,12 +1,17 @@
 <template>
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">Example Component</div>
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Example Chat</div>
 
-                    <div class="card-body">
-                        I'm an example component.
+                    <div class="panel-body">
+                        <ul>
+                            <li v-for="item in messages">{{ item.message }} - <i>{{ item.user }}</i></li>
+                        </ul>
+
+                        <input type="text" v-model="message"><br />
+                        <button class="btn btn-success" @click="send()">Send!</button>
                     </div>
                 </div>
             </div>
@@ -16,8 +21,27 @@
 
 <script>
     export default {
+        data(){
+            return {
+                messages: [],
+                message: '',
+            }
+        },
+
+        methods: {
+            send() {
+                axios.post('/ordered', {message: this.message})
+                    .then((response) => {
+                        this.message = '';
+                    });
+            }
+        },
+
         mounted() {
-            console.log('Component mounted.')
+            Echo.channel('my-channel')
+                .listen('.my-event', (message) => {
+                    this.messages.push(message);
+                });
         }
     }
 </script>

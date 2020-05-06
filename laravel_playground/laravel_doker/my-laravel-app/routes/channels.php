@@ -17,6 +17,7 @@ Broadcast::channel('App.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
 
-Broadcast::channel('order.{orderId}', function ($user, $orderId) {
-    return $user->id === Order::findOrNew($orderId)->user_id;
+Broadcast::channel('order.1', function ($user, $orderId) {
+    # return $user->id === Order::findOrNew($orderId)->user_id;
+    return true; // 今回はログインなし
 });
