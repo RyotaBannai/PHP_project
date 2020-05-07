@@ -518,3 +518,62 @@ Broadcast::channel('order.{orderId}', function ($user, $orderId) {
     return $user->id === Order::findOrNew($orderId)->user_id;
 });
 ```
+### キャッシュ
+- `Illuminate\Contracts\Cache\Factory`と`Illuminate\Contracts\Cache\Repository`契約は、Laravelのキャッシュサービスへのアクセスを提供
+- Factory契約は、アプリケーションで定義している**全キャッシュドライバ**へのアクセスを提供。Repository契約は通常、cache設定ファイルで指定している、アプリケーションの**デフォルトキャッシュドライバ**の実装
+- `redis-cli monitor` monitor any transaction.
+- `keys *` shows all keys.
+- `Cache::has('key')` keyの存在確認
+- **取得不可時更新**: 全ユーザーをキャッシュから取得しようとし、存在していない場合はデータベースから取得しキャッシュへ追加したい場合. キャッシュに存在しない場合、rememberメソッドに渡された「クロージャ」が実行され、結果がキャッシュに保存される。
+
+```php
+$value = Cache::remember('users', $seconds, function () {
+    return DB::table('users')->get();
+});
+```
+- **非存在時保存**: `add`メソッドはキャッシュに保存されていない場合のみ、そのアイテムを保存。キャッシュへ実際にアイテムが**追加された場合**は`true`が返ってきます。そうでなければfalseが返されます。
+- キャッシュ全体をクリアしたい場合は`flush`メソッド
+- `アトミックロック`: memcachedかdynamodb、redisドライバを使用する必要がある。さらに、すべてのサーバが**同じ中央キャッシュサーバに接続する**必要がある。
+    - アトミックロックにより`競合状態を心配することなく、分散型のロック操作を実現できる`
+    - Laravel Forgeでは、`一度に１つのリモートタスクを１つのサーバで実行するため`に、アトミックロックを使用
+    - ロックを生成し、管理するには`Cache::lock`メソッドを使用
+    - getメソッドは、クロージャも引数に取り, `クロージャ実行後Laravel は自動的にロックを解除`する
+    - リクエスト時に`ロックが獲得できないとき`に、`指定秒数待機するようにLaravelに指示できる`。指定制限時間内にロックが獲得できなかった場合は、`Illuminate\Contracts\Cache\LockTimeoutException`が投げられる。`$lock->block(5);`
+    - リクエスト時に`ロックが獲得できないとき`に、`指定秒数待機するようにLaravelに指示できる`。指定制限時間内にロックが獲得できなかった場合は、`Illuminate\Contracts\Cache\LockTimeoutException`が投げられる。`$lock->block(5);`でロックを獲得するように待機。
+    - 別々のプロセス間でロック管理を共通で行いたいとき: ロックを限定する「所有者トークン」を渡す。`$lock->owner()`, then `Cache::restoreLock('SomeKey', $this->owner)->release();`
+
+```php
+$lock = Cache::lock('foo', 10);
+if ($lock->get()) {
+    // １０秒間ロックを獲得する
+
+    $lock->release();
+}
+``` 
+
+```php
+Cache::lock('foo')->get(function () {
+    // 無期限のロックを獲得し、自動的に開放する
+});
+```
+
+```php
+$lock = Cache::lock('foo', 10);
+
+try {
+    $lock->block(5);
+
+    // 最大５秒待機し、ロックを獲得
+} catch (LockTimeoutException $e) {
+    // ロックを獲得できなかった
+} finally {
+    optional($lock)->release();
+}
+
+Cache::lock('foo', 10)->block(5, function () {
+    // 最大５秒待機し、ロックを獲得
+});
+```
+
+- `tag` で追加することで複数の関連するキーをまとめて扱うことができる。`Cache::tags(['people'])->flush();`　`people`にタグ付けされたキーは全て消去される。
+- イベント：キャッシュの操作に対してイベントを実行する場合は通常、イベントリスナは`EventServiceProvider`の中へ設置する。

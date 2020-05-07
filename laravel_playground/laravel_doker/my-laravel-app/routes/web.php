@@ -79,7 +79,8 @@ Route::prefix('redis')->group(function(){
     // regex もしあればwhereでヒットするurl
     Route::get('{anything?}', 'RedisController@set')->where('anything', 'set');
     // Route::match(['/','set'], ',', function(){}); のように書くこともできる.
-    Route::get('get', 'RedisController@get');
+    Route::get('get', 'RedisController@get2');
+    Route::get('tag', 'RedisController@tag');
 });
 
 Route::prefix('practice')->group(function(){
@@ -93,7 +94,6 @@ Route::prefix('practice')->group(function(){
 
 Route::get('/testCache', function() {
     Cache::put('name', 'aaa',100);
-
     return Cache::get('name');
 });
 

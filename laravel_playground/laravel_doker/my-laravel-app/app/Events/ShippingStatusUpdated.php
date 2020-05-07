@@ -25,7 +25,9 @@ class ShippingStatusUpdated implements ShouldBroadcast //
     public function broadcastOn()
     {
         // return new PrivateChannel('channel-name');
-        return ['my-channel'];
+
+        // return ['my-channel']; // or
+        return new Channel('my-channel');
     }
 
     public function broadcastAs()
