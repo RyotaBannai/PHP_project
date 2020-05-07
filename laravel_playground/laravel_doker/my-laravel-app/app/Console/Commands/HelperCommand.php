@@ -3,26 +3,23 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Playground\ExampleCollection2;
-use App\Models\User;
-use App\Http\Resources\User as UserResource;
+use App\Playground\Helpers;
 
-
-class CollectionComamnd extends Command
+class HelperCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'command:collectionexample';
+    protected $signature = 'command:helperexample';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Laravel Collection Playground';
+    protected $description = 'Laravel Helper Playground';
 
     /**
      * Create a new command instance.
@@ -41,7 +38,6 @@ class CollectionComamnd extends Command
      */
     public function handle()
     {
-        # return (new ExampleCollection2)->main();
-        dump(User::find(1)->attributesToArray());
+        dump((new Helpers())->_other());
     }
 }

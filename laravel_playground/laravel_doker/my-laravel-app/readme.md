@@ -601,3 +601,24 @@ $visibility = Storage::getVisibility('file.jpg');
 
 Storage::setVisibility('file.jpg', 'public');
 ```
+## Helpers
+- `rescue`関数は指定されたクロージャを実行し、実行時に発生する例外をキャッチします。キャッチされた例外は、すべて例外ハンドラのreportメソッドに送られます。しかし、リクエストは引き続き処理されます。
+```php
+return rescue(function () {
+    return $this->method();
+});
+```
+- `throw_if`関数は、指定した論理式がtrueと評価された場合に、指定した例外を投げます。
+```php
+throw_if(! Auth::user()->isAdmin(), AuthorizationException::class);
+
+throw_if(
+    ! Auth::user()->isAdmin(),
+    AuthorizationException::class,
+    'You are not allowed to access this page'
+);
+```
+- `validator`関数は、指定した引数で新しいバリデータインスタンスを生成します。利便のため、Validatorファサードを代わりに使うこともできます。
+```php
+$validator = validator($data, $rules, $messages);
+```

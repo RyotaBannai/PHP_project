@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\URL;
 // プロバイダーで利用できるようになったサービスを利用
 use App\Services\MyUtil; // サービス（Utilクラス）のエイリアスを作成
 
-use Storage;
+//use Storage;
 use App\Models\User;
 use App\Http\Resources\User as UserResource;
 use App\Http\Resources\UserCollection ;
