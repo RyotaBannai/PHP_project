@@ -577,3 +577,27 @@ Cache::lock('foo', 10)->block(5, function () {
 
 - `tag` で追加することで複数の関連するキーをまとめて扱うことができる。`Cache::tags(['people'])->flush();`　`people`にタグ付けされたキーは全て消去される。
 - イベント：キャッシュの操作に対してイベントを実行する場合は通常、イベントリスナは`EventServiceProvider`の中へ設置する。
+
+### File Storage
+- `publicディスク`は一般公開へのアクセスを許すファイル
+- デフォルトのpublicディスクは、`localドライバ`を使用しており、`storage/app/public`下に存在しているファイル
+- Webからのアクセスを許すには、`public/storage`から`storage/app/public`へ`シンボリックリンク`を張る必要がある `php artisan storage:link` ファイルを保存し、シンボリックリンクを貼ったら、assetヘルパを使いファイルへURLを生成できる。 `echo asset('storage/file.txt');`
+- ローカルディスク: デフォルトでは`storage/appディレクトリ` `Storage::disk('local')->put('file.txt', 'Contents');` は`storage/app/file.txt`として保存
+- s3 を使う：　https://qiita.com/tiwu_official/items/ecb115a92ebfebf6a92f
+- `Storage::disk('s3')->exists('filename.txt');` 指定したディスクにファイルが存在しているかを判断
+- `return Storage::download('file.jpg');` ダウンロード
+- store メソッドを使えばデフォルトのフォルダにシンプルにアップロードできる。以下の例では、ファイル名ではなく、ディレクトリ名を指定している点に注目。デフォルトでstoreメソッドは、一意のIDをファイル名として生成する。ファイルの拡張子は、MIMEタイプの検査により決まる。
+```php
+public function update(Request $request)
+    {
+        $path = $request->file('avatar')->store('avatars');
+
+        return $path;
+    }
+```
+- 視認性：
+```php
+$visibility = Storage::getVisibility('file.jpg');
+
+Storage::setVisibility('file.jpg', 'public');
+```

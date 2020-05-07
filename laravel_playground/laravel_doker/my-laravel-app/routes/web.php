@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\URL;
 // プロバイダーで利用できるようになったサービスを利用
 use App\Services\MyUtil; // サービス（Utilクラス）のエイリアスを作成
 
+use Storage;
 use App\Models\User;
 use App\Http\Resources\User as UserResource;
 use App\Http\Resources\UserCollection ;
@@ -23,7 +24,7 @@ use App\Http\Resources\UserCollection ;
 
 $encrypt = app()->make('encrypter');
 
-Route::get('/', function () {
+Route::any('/', function () {
     return view('welcome');
 });
 
@@ -51,9 +52,22 @@ Route::get('/sayhi','FacadeController@index');
 Route::get('/dojobs', 'SameFunctionsController@index');
 Route::get('/food', 'FoodController@index');
 
-
 Route::get('/order', 'OrderController@order');
 Route::post('/ordered', 'OrderController@ordered');
+
+Route::prefix('file')->group(function() {
+    Route::get('/', 'FileController@index');
+    Route::post('upload', 'FileController@upload');
+    Route::get('show', 'FileController@show');
+    Route::get('info', function () {
+        return '<pre>' . collect([
+                asset('storage/file.txt'),
+                public_path('storage'),
+                storage_path('app/public'),
+                Storage::url('file.jpg'),
+            ])->toJson(JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . '</pre>';
+    });
+});
 
 Route::prefix('users')->group(function(){
     Route::get('list', 'UserController@userList');
