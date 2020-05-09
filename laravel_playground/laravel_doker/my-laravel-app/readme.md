@@ -197,7 +197,7 @@ https://lavalite.org/blog/differences-between-php-artisan-dump-autoload-and-comp
 - `php artisan migrate:rollback`で最後のmigrationを元に戻す= テーブルを消去. `php artisan migrate:rollback --step=5`で最後の5マイグレーションをロールバック. `php artisan migrate:reset` で全てのマイグレーションをロールバック.
 - 特定のテーブルに対して実行したい場合はパスも指定する`php artisan migrate:refresh  --path=/database/migrations/2014_10_12_000000_create_users_table.php`
 - データベースをリフレッシュしたい.. `php artisan migrage:refresh`-> 全てロールバックして、全てマイグレーションする.  `php artisan migrage:refresh --seed`-> シードも加える. **refreshはfresh(drop)とは別の概念.**
-- **外部キー制約** `$table->foreign('user_id')->references('id')->on('users')` この場合、`company` tableの`user_id` に`users` tableの`id`をリンクさせる. さらに束縛に対して、on Deleteやon Updateに対する処理をオプションとして指定できる. `onDelete('cascade')`で`id`が消去された時に、`company`のレコードも消去される. 消去したく無ければ、null を指定。デフォルトはrestrictまたはnoactionで削除アクションは拒否される.
+- **外部キー制約** `$table->foreign('user_id')->references('id')->on('users')` この場合、`company` tableの`user_id` に`users` tableの`id`をリンクさせる. さらに束縛に対して、on Deleteやon Updateに対する処理をオプションとして指定できる. `onDelete('cascade')`で`id`が消去された時に、`company`のレコードも消去される. 消去したく無ければ、null を指定。デフォルトはrestrictまたはno actionで削除アクションは拒否される.
 - 参考 https://stackoverflow.com/questions/6720050/foreign-key-constraints-when-to-use-on-update-and-on-delete
 - https://www.mysqltutorial.org/mysql-on-delete-cascade/
 - Laravel docs: https://readouble.com/laravel/5.5/ja/migrations.html
@@ -223,11 +223,13 @@ use Controller\MyController
 - Rails発祥のアイディアだがLaravelのEloquentにも適用されている.
 - Add a new model file in `app\Models` by hitting `php artisan make:model Models\\Ingredient` **クラス名は単数形にすること**.
 - モデルにどのテーブルを使用するか、Eloquentに指定していない点に注目。他の名前を明示的に指定しない限り、クラス名を複数形の「スネークケース」にしたものが、テーブル名として使用される.
-- Modeleで作ったメソッドは、Controller内で直接呼び出すと言うよりかは、all() で取ってきた全データに対してメソッドを使う、 と言う考え方.
-- そのため、foreachでは連想配列で添字を使用して各要素を呼び出している訳じゃなく、各インスタンスのプロパティを取得していると言う訳なのである.
-- docker環境でSeedを使うときは一回中に入らないと、dbにアクセスできないの注意.(homestead使っている時など) `docker-compose exec app bash`, `php artisan db:seed --class=UsersTableSeeder`
+- `Modele`で作ったメソッドは、Controller内で直接呼び出すと言うよりかは、`all()`で取ってきた全データに対してメソッドを使う、 と言う考え方.
+- そのため、foreachでは連想配列で添字を使用して各要素を呼び出している訳じゃなく、`各インスタンスのプロパティを取得している`と言う訳なのである.
+- docker環境でSeedを使うときは一回中に入らないと、dbにアクセスできないの注意.(homestead使っている時など) `docker-compose exec app bash`
+- `php artisan db:seed`: DatabaseSeeder に書いたシード全部実行。`php artisan db:seed --class=UsersTableSeeder`：特定のシード実行
 - データベースをからにする場合 `php artisan migrate:refresh` からにしてシードを入れる場合 `php artisan migrate:refresh --seed`
 - 参照 https://qiita.com/yukibe/items/f18c946105c89c37389d
+- **Migrationでカラム情報変更・消去**: カラムを変更する前に、composer.jsonファイルで`doctrine/dbal`を確実に追加する。`Doctrine DBAL`ライブラリーは`現在のカラムの状態を決め、指定されたカラムに対する修正を行うSQLクエリを生成する`ために使用される。
 ### Eloquent ORM 
 - ORM作成時にマイグレーションも作成したい場合`php artisan make:model User --migration (or -m)`
 - Eloquentは更にテーブルの主キーがidというカラム名であると想定。この規約をオーバーライドする場合は、**protectedのprimaryKeyプロパティ**を定義
@@ -238,7 +240,7 @@ use Controller\MyController
 - `::where('active', 1)->count()`とかで集計ができる
 - ソフトデリート（論理消去）をやるには、`Illuminate\Database\Eloquent\SoftDeletes`トレイトを使い、`deleted_at`カラムを`$dates`プロパティに追加.`softDeletes()`を使い、実際にソフトデリートされたかどうか確認するには `trashed()`. ソフトデリートしたモデルは自動的にクエリの結果から除外される.なので取得したい時は、`withTrashed()`.
 - all() などのグローバルスコープの挙動を変えたい時は、`Illuminate\Database\Eloquent\Scope`インターフェイスを実装したクラスを定義し,apply()にwhere を書く. overwriteすることになるため、selectは使用してはならない。それから、modelでboot()、その中でparent::boot();static::addGlobalScope(new YourNewScope);` を記述.
-- Eloquentではイベントを発行できる。creaitng, updating, deleting等. これ利用してリアルタイムの投票結果システムなど構築できる.
+- Eloquentではイベントを発行できる。creating, updating, deleting等. これ利用してリアルタイムの投票結果システムなど構築できる.
 ### Eloquent ORM リレーション
 - User テーブルクラスで hasOne('Models\Phone')を定義し、User::find(1)->phone;とする-> 初めにユーザーid, ここではuser_idがphone テーブルにあると仮定して、その情報を取得するリレーションを作成することができる.
 ```php

@@ -39,6 +39,11 @@ class User extends Authenticatable
                                 //options属性へ値をセットすると配列は保存のために自動的にJSONへシリアライズ
     ];
 
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
+
     public function getData(){
         return $this->name.': '.$this->email;
     }

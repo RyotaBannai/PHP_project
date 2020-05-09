@@ -1,23 +1,44 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\Models\User;
+use App\Models\Post;
+use App\Models\Image;
 
 class UsersTableSeeder extends Seeder
 {
     public function run()
     {
-        for($i=0, $end=10; $i<$end; ++$i) {
-            DB::table('users')->insert([
-                'name' => Str::random(10),
-                'email' => Str::random(10) . '@gmail.com',
-                'email_verified_at' => new DateTime(),
-                // 'email'=> str_random(10), '@gmail.com', str_random is depricated
-                'password' => bcrypt('secret'),
-                'remember_token' => '',
-                'created_at' => new DateTime(),
-                'updated_at' => new DateTime(),
-                'active' => array_rand(array(0,1))
-            ]);
-        }
+        $userDB = DB::table('users');
+        $postDB = DB::table('posts');
+        $imageDB = DB::table('images');
+        $userDB->truncate(); // or use model like this: User::truncate();
+        // $userDB->delete(); // doesn't reset auto increment counter.. so use truncate.
+        $postDB->truncate();
+        $imageDB->truncate();
+
+        // $users = factory(User::class, 10)->create();
+        $users = factory(User::class, 10)
+            ->create()
+            ->map(function($user){ // each だと戻らないため
+                return $user->posts()->saveMany(factory(Post::class, 2)->create([
+                    'user_id' => $user->id, // overwrite default setting
+               ]));
+            })->flatten(); // 1ユーザーに対し複数のpostインタンスを生成してるためcollectionになるため
+
+        $users = $users->each(function($post){
+        // $post->images()->save(factory(Image::class)->make([
+        $post->images()->saveMany(factory(Image::class, Arr::random([0, 1, 2, 3]))->make([
+            'target_id' => $post->id,
+            'target_type' => 'App\Models\Post',
+            ]));
+        });
     }
 }
+        // use factory instead of seed file.
+//        $faker = Faker\Factory::create();
+//        for($i=0, $end=10; $i < $end; ++$i) {
+//            $userDB->insert([
+//                'name' => $faker->userName
+//            ]);
+//        }
