@@ -290,8 +290,36 @@ App\User::cursor()->filter(function ($user) {
 - Photoモデルのimageable(morph)関係は写真を所有しているモデルのタイプにより、`StaffもしくはOrderどちらかのインスタンス`をリターン。
 ```php
 $posts = Post::has('comments')->get(); // 最低でも一つのコメントを持つ、全ブログポストを取得したい場合
-$posts = Post::has('comments', '>=', 3)->get(); // 演算子とレコード数も指定できる
+$posts = Post::has('comments',has '>=', 3)->get(); // 演算子とレコード数も指定できる
 $posts = Post::has('comments.votes')->get(); // ドット」記法
+```
+- Even more powerful way to use has. `orWhereHas` methods to put "where" conditions on your has queries:
+```php
+$posts = Post::whereHas('comments', function($q)
+{
+    $q->where('content', 'like', 'foo%');
+
+})->get();
+```
+- `親のタイムスタンプの更新` : 子供のモデルが変更された場合、所属している(belongsTo)親のタイムスタンプも変更されると便利. `touches` を使う。（例えば、Commentモデルが更新されたら、Postが持っているupdated_atタイムスタンプも自動的に更新したい場合）
+```php
+class Comment extends Model {
+
+    protected $touches = ['post']; // 更新したい親モデル
+
+    public function post()
+    {
+        return $this->belongsTo('App\Post');
+    }
+
+}
+```
+```php
+$comment = Comment::find(1);
+
+$comment->text = 'このコメントを変更！';
+
+$comment->save(); // 関連づけてる親のupdate_at も更新される。
 ```
 ### Eloquent ORM リレーション
 - User テーブルクラスで hasOne('Models\Phone')を定義し、User::find(1)->phone;とする-> 初めにユーザーid, ここではuser_idがphone テーブルにあると仮定して、その情報を取得するリレーションを作成することができる.

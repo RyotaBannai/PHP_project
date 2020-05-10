@@ -32,17 +32,17 @@ class UsersTableSeeder extends Seeder
         $users_posts->each(function($post){
         // $post->images()->save(factory(Image::class)->make([
             $post->images()->saveMany(
-                factory(Image::class, Arr::random([0, 1, 2, 3]))->make([
+                factory(Image::class, Arr::random([1, 2, 3]))->make([
                     'target_id' => $post->id,
                     'target_type' => 'App\Models\Post',
                 ]));
 
             $post->comments()->saveMany(
-                factory(Comment::class, Arr::random([0, 1, 2]))->create([
+                factory(Comment::class, Arr::random([2]))->create([
                     'target_id' => $post->id,
                     ])
                     ->each(function ($comment){
-                        $comment->images()->saveMany(factory(Image::class, Arr::random([0, 1]))->make([
+                        $comment->images()->saveMany(factory(Image::class, Arr::random([1, 2]))->make([
                             'target_id' => $comment->id,
                             'target_type' => 'App\Models\Comment',
                         ]));
@@ -52,7 +52,7 @@ class UsersTableSeeder extends Seeder
                             'target_id' => $comment->id,
                             'target_type' => 'App\Models\Comment',
                         ])->flatten()->each(function($comment){
-                            $comment->images()->saveMany(factory(Image::class, Arr::random([0, 1]))->make([
+                            $comment->images()->saveMany(factory(Image::class, Arr::random([1, 2]))->make([
                                 'target_id' => $comment->id,
                                 'target_type' => 'App\Models\Comment',
                             ]));

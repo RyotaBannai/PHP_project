@@ -20,7 +20,8 @@ class PostController extends Controller
     }
 
     public function show(Request $request){
-        $posts = new Post();
-        return view('post.index');
+        $posts = Post::with(['comments.images', 'comments.comments.images', 'images'])->take(1)->get();
+        // take(1)->get() will return a collection with one element. first() will return element itself.
+        return view('post.show', compact('posts'));
     }
 }
