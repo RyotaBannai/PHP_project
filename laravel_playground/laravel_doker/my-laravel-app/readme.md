@@ -230,6 +230,22 @@ use Controller\MyController
 - データベースをからにする場合 `php artisan migrate:refresh` からにしてシードを入れる場合 `php artisan migrate:refresh --seed`
 - 参照 https://qiita.com/yukibe/items/f18c946105c89c37389d
 - **Migrationでカラム情報変更・消去**: カラムを変更する前に、composer.jsonファイルで`doctrine/dbal`を確実に追加する。`Doctrine DBAL`ライブラリーは`現在のカラムの状態を決め、指定されたカラムに対する修正を行うSQLクエリを生成する`ために使用される。
+- ファクトリの中のクロージャでは評価済みのファクトリーの属性配列を受け取ることもできる。
+```php
+$factory->define(App\Post::class, function ($faker) {
+    return [
+        'title' => $faker->title,
+        'content' => $faker->paragraph,
+        'user_id' => function () {
+            return factory(App\User::class)->create()->id;
+        },
+        'user_type' => function (array $post) {
+            return App\User::find($post['user_id'])->type;
+        }
+    ];
+});
+- mass assignment http://laravel.hatenablog.com/entry/2013/10/24/005050
+```
 ### Eloquent ORM 
 - ORM作成時にマイグレーションも作成したい場合`php artisan make:model User --migration (or -m)`
 - Eloquentは更にテーブルの主キーがidというカラム名であると想定。この規約をオーバーライドする場合は、**protectedのprimaryKeyプロパティ**を定義
@@ -241,6 +257,42 @@ use Controller\MyController
 - ソフトデリート（論理消去）をやるには、`Illuminate\Database\Eloquent\SoftDeletes`トレイトを使い、`deleted_at`カラムを`$dates`プロパティに追加.`softDeletes()`を使い、実際にソフトデリートされたかどうか確認するには `trashed()`. ソフトデリートしたモデルは自動的にクエリの結果から除外される.なので取得したい時は、`withTrashed()`.
 - all() などのグローバルスコープの挙動を変えたい時は、`Illuminate\Database\Eloquent\Scope`インターフェイスを実装したクラスを定義し,apply()にwhere を書く. overwriteすることになるため、selectは使用してはならない。それから、modelでboot()、その中でparent::boot();static::addGlobalScope(new YourNewScope);` を記述.
 - Eloquentではイベントを発行できる。creating, updating, deleting等. これ利用してリアルタイムの投票結果システムなど構築できる.
+- `cursor`メソッドにより、ひとつだけクエリを実行するカーソルを使用し、データベース全体を繰り返し処理できる。大量のデータを処理する場合、cursorメソッドを使用すると、大幅にメモリ使用量を減らすことができる。
+```php
+foreach (Flight::where('foo', 'bar')->cursor() as $flight) {
+    //
+}
+```
+
+```php
+App\User::cursor()->filter(function ($user) {
+    return $user->id > 500;
+});
+```
+- Eager Loader を使わない場合`cursor()`を使ってもメモリ節約になる。
+- The cursor method allows you to iterate through your database records using a cursor, `which will only execute a single query`.
+- `Chunk` retrieves the records from the database, and `load it into memory` while setting a cursor on the last record retrieved so there is no clash. (`Chunk runs the query at every record size`)
+- Laravel's select uses PHP's `fetchAll` whereas Laravel's cursor uses PHP's `fetch`. Both execute the same amount of SQL, but **the former** immediately builds `an array` with the whole data, whereas **the latter** fetches the data one row at a time, allowing to hold in memory **only this row**, not the previous nor the following ones. 
+
+|              | Time(sec)  | Memory(MB) |
+|:--------------|:------------:|:------------:|
+| get()        |        0.8 |     132    |
+| chunk(100)   |       19.9 |      10    |
+| chunk(1000)  |        2.3 |      12    |
+| chunk(10000) |        1.1 |      34    |
+| cursor()     |        0.5 |      45    |
+- cursor() is the fastest.
+- `save`メソッドが呼ばれると新しいレコードがデータベースに挿入される。`save`が呼び出された時にcreated_atとupdated_atタイムスタンプは自動的に設定される。
+- Eloquentの複数モデル更新を行う場合、更新モデルに対するsaving、saved、updating、updatedモデルイベントは発行されない。その理由は`複数モデル更新を行う時、実際にモデルが取得されるわけではないから`。
+- モデル内部の状態が変化したかを判定し、ロード時のオリジナルな状態からどのように変化したかを調べるため、Eloquentは`isDirty`、`isClean`、`wasChanged`メソッド。
+- `isDirty`メソッドはロードされたモデルから属性に変化があったかを判定します。特定の属性に変化があったかを調べるために、属性名を渡し指定できます。`isClean`メソッドは`isDirty`の反対の働き。
+- `wasChanged`メソッドは現在のリクエストサイクル中、最後にモデルが保存されたときから属性に変化があったかを判定。
+- Photoモデルのimageable(morph)関係は写真を所有しているモデルのタイプにより、`StaffもしくはOrderどちらかのインスタンス`をリターン。
+```php
+$posts = Post::has('comments')->get(); // 最低でも一つのコメントを持つ、全ブログポストを取得したい場合
+$posts = Post::has('comments', '>=', 3)->get(); // 演算子とレコード数も指定できる
+$posts = Post::has('comments.votes')->get(); // ドット」記法
+```
 ### Eloquent ORM リレーション
 - User テーブルクラスで hasOne('Models\Phone')を定義し、User::find(1)->phone;とする-> 初めにユーザーid, ここではuser_idがphone テーブルにあると仮定して、その情報を取得するリレーションを作成することができる.
 ```php
@@ -269,12 +321,16 @@ $phone = User::find(1)->phone; // 1vs 1　
 - 取得したコレクションにプロパティにアクセスしたときに実際にデータをロードする（遅延ロード）。これだとパフォーマンスが悪いため、Eagerローディングで事前に全てロードしておくと良い. (都度ロードするということはN+1問題だということ)
 - ::with('author)->get()を使用.
 ### 遅延Eagerローディング
-- all()で読み込んだ後に、laod()を使う.
+- all()で読み込んだ後に、load()を使う. 普通のEagerローディングはwith()
 ```pho
 $books = Models\Book::all();
 $books->load('author');
 ```
 - 参照 https://readouble.com/laravel/5.5/ja/eloquent-relationship.html
+```php
+$books = Book::with('author', 'publisher')->get(); // 一度に複数の関係をEagerローディング
+Book::with('author.contacts')->get(); // ネストした関連. author関係がEagerローディングされ、それからauthorのcontacts関係がEagerローディング
+```
 ### 変数受け渡し方法
 - https://qiita.com/ryo2132/items/63ced19601b3fa30e6de
 ### Eloquent コレクション
@@ -303,6 +359,7 @@ return Collection::times(3, function($value){
 - `union`: 指定した配列をコレクションへ追加する。既にコレクションにあるキーが、オリジナル配列に含まれている場合は、オリジナルコレクションの値が優先される。
 - `search` 値を探索して、key をリターン
 - `split` と `chunk`はcollectionを分割するという点で似ているが、`chunk`は指定した数値で分割できない場合blows up. `split`は残りは残りだけでarrayを作る。
+- 
 ### 
 - model の `$dates` プロパティにカラム名をセットしておけば、デフォルトで`Carbon`インスタンスにキャストされるため、どのそソッドでも使えるようになる。これはデータベースにはdatatimedで保存されているが、取り出し時に`Carbon`インスタンスにキャストされる。
 - `$casts`にキャストしたいカラムを指定することもできる。同様にデータベースに保存してる内容を取り出した時にキャストする。`is_admin`が`0 or 1`で保存されていて取り出した時に`false or true`へキャストされる。

@@ -53,9 +53,23 @@ $factory->define(Post::class, function (Faker $faker) {
 });
 
 $factory->define(Comment::class, function (Faker $faker) {
+    $bool = $faker->boolean();
     return [
-        'post_id' => function () {
-            return factory(Post::class)->create()->id;
+        'target_id' => function () use ($faker, $bool) {
+            if ($bool) {
+                return factory(Post::class)->create()->id;
+            }
+            else {
+                return factory(Comment::class)->create()->id;
+            }
+        },
+        'target_type' => function () use ($faker, $bool) {
+            if ($bool) {
+                return 'App\Models\Post';
+            }
+            else {
+                return 'App\Models\Comment';
+            }
         },
         'body' => $faker->realText(20),
         'created_at' => $faker->dateTime,

@@ -39,13 +39,24 @@ class UsersTableSeeder extends Seeder
 
             $post->comments()->saveMany(
                 factory(Comment::class, Arr::random([0, 1, 2]))->create([
-                    'post_id' => $post->id,
+                    'target_id' => $post->id,
                     ])
                     ->each(function ($comment){
                         $comment->images()->saveMany(factory(Image::class, Arr::random([0, 1]))->make([
                             'target_id' => $comment->id,
                             'target_type' => 'App\Models\Comment',
                         ]));
+                    })
+                    ->each(function ($comment){
+                        $comment->comments()->saveMany(factory(Comment::class, Arr::random([1, 2]))->create([
+                            'target_id' => $comment->id,
+                            'target_type' => 'App\Models\Comment',
+                        ])->flatten()->each(function($comment){
+                            $comment->images()->saveMany(factory(Image::class, Arr::random([0, 1]))->make([
+                                'target_id' => $comment->id,
+                                'target_type' => 'App\Models\Comment',
+                            ]));
+                        }));
                     })
             );
         });

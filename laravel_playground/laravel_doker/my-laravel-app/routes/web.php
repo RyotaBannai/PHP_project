@@ -11,17 +11,7 @@ use App\Models\User;
 use App\Http\Resources\User as UserResource;
 use App\Http\Resources\UserCollection ;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
-
+// Use the method registered in service provider
 $encrypt = app()->make('encrypter');
 
 Route::any('/', function () {
@@ -114,3 +104,7 @@ Route::get('/testCache', function() {
 Route::get('/user', 'RedisController@get')->middleware('checkAge:author, senior');
 
 Route::get('/session', 'SessionController@index');
+
+Route::prefix('_post')->group(function() {
+    Route::get('comment', 'PostController@comment');
+});
