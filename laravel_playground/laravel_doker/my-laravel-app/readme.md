@@ -226,6 +226,7 @@ use Controller\MyController
 - `Modele`で作ったメソッドは、Controller内で直接呼び出すと言うよりかは、`all()`で取ってきた全データに対してメソッドを使う、 と言う考え方.
 - そのため、foreachでは連想配列で添字を使用して各要素を呼び出している訳じゃなく、`各インスタンスのプロパティを取得している`と言う訳なのである.
 - docker環境でSeedを使うときは一回中に入らないと、dbにアクセスできないの注意.(homestead使っている時など) `docker-compose exec app bash`
+- Seeder作成`php artisan make:seeder TagsTableSeeder` テーブル名を複数形にしてTableSeederと続ける。
 - `php artisan db:seed`: DatabaseSeeder に書いたシード全部実行。`php artisan db:seed --class=UsersTableSeeder`：特定のシード実行
 - データベースをからにする場合 `php artisan migrate:refresh` からにしてシードを入れる場合 `php artisan migrate:refresh --seed`
 - 参照 https://qiita.com/yukibe/items/f18c946105c89c37389d

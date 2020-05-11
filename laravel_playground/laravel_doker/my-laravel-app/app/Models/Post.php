@@ -17,4 +17,9 @@ class Post extends Model
     {
         return $this->morphMany(Comment::class, 'target');
     }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class);
+    }
 }

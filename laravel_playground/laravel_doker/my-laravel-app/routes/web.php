@@ -108,4 +108,5 @@ Route::get('/session', 'SessionController@index');
 Route::prefix('_post')->group(function() {
     Route::get('comment', 'PostController@comment');
     Route::get('show', 'PostController@show');
+    Route::get('attach_tag', 'PostController@attachTag');
 });

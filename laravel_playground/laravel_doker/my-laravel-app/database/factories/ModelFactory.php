@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Post;
 use App\Models\Comment;
 use App\Models\Image;
+use App\Models\Tag;
 use Faker\Generator as Faker;
 use Illuminate\Support\Str;
 
