@@ -24,7 +24,8 @@ class PostController extends Controller
     {
 
         $post = Post::find($post_id);
-        $post->tags()->attach($tag_id); // detach() is the opposite.
+        // $post->tags()->attach($tag_id); // detach() is the opposite.
+        $post->tags()->sync($tag_id);
         // $post->tags() でpostに紐づいたタグ一覧を取得。
         // attachメソッドにタグidの配列を渡すことによってpost_tagに一気にタグを登録
         // syncメソッドを使うと、指定したIDのみを保存し、それ以外を削除

@@ -248,7 +248,7 @@ $factory->define(App\Post::class, function ($faker) {
 - mass assignment http://laravel.hatenablog.com/entry/2013/10/24/005050
 ```
 ### Eloquent ORM 
-- ORM作成時にマイグレーションも作成したい場合`php artisan make:model User --migration (or -m)`
+- Model作成時にマイグレーションも作成したい場合`php artisan make:model User --migration (or -m)`
 - Eloquentは更にテーブルの主キーがidというカラム名であると想定。この規約をオーバーライドする場合は、**protectedのprimaryKeyプロパティ**を定義
 - 主キーに関しては色々と制約があるため、気を付ける. int, autoincrementでない場合等. 
 - Eloquentモデルはデフォルトでアプリケーションに設定されているデフォルトのデータベース接続を利用. モデルで異なった接続をしたい場合は、**$connectionプロパティ**を使用.
@@ -322,6 +322,10 @@ $comment->text = 'このコメントを変更！';
 
 $comment->save(); // 関連づけてる親のupdate_at も更新される。
 ```
+- pivot table を一通り触る https://www.yuulinux.tokyo/13566/
+- 中間テーブルにもメソッドを持たせたい場合は `->using`.  `App\Models\Post::find(1)->tags->first()->pivot->hello();`こんな感じでpivot経由でアクセスできる。
+- `->withTimestamps();` created_at とかupdate_atなどを適当にやってくれる。
+
 ### Eloquent ORM リレーション
 - User テーブルクラスで hasOne('Models\Phone')を定義し、User::find(1)->phone;とする-> 初めにユーザーid, ここではuser_idがphone テーブルにあると仮定して、その情報を取得するリレーションを作成することができる.
 ```php

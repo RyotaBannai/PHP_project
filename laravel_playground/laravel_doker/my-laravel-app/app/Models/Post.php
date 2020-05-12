@@ -20,6 +20,9 @@ class Post extends Model
 
     public function tags()
     {
-        return $this->belongsToMany(Tag::class);
+        // return $this->belongsToMany(Tag::class); // Laravel　に自動で認識させたいなら、このままで十分 で post_tag tableを読み込む // id は tablename_id
+        // return $this->belongsToMany(Tag::class, post_tags); // pivot tableが別名の場合第二引数に渡す. idも違う場合は、第三、第四引数で渡す
+        return $this->belongsToMany(Tag::class)->using(PostTag::class);
+        // ->withPivot(‘カラム名’)で中間テーブルのカラムを取得
     }
 }
