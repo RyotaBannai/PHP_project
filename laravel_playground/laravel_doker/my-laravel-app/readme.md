@@ -201,6 +201,7 @@ https://lavalite.org/blog/differences-between-php-artisan-dump-autoload-and-comp
 - 参考 https://stackoverflow.com/questions/6720050/foreign-key-constraints-when-to-use-on-update-and-on-delete
 - https://www.mysqltutorial.org/mysql-on-delete-cascade/
 - Laravel docs: https://readouble.com/laravel/5.5/ja/migrations.html
+- wipe command: `php artisan db:wipe` - `migrate:reset` command is very slow **on many migrations amount** because it iterates thru the migrations table and executes down method for each migration. But more importantly, `down` method could be missing if migrations designed to go only `up` or **there is no dropping foreign keys** in them. So now call `db:wipe`and then migrate.
 ### composer.json, autoload
 - 記述方式は 、"名前空間プレフィクス\\" : "対応するベースディレクトリ" となる。
 - 例えば、 namespace Controllers と宣言されたクラスは、app/controllers/の中にありますよ、と設定してあげている状態。
@@ -228,7 +229,9 @@ use Controller\MyController
 - docker環境でSeedを使うときは一回中に入らないと、dbにアクセスできないの注意.(homestead使っている時など) `docker-compose exec app bash`
 - Seeder作成`php artisan make:seeder TagsTableSeeder` テーブル名を複数形にしてTableSeederと続ける。
 - `php artisan db:seed`: DatabaseSeeder に書いたシード全部実行。`php artisan db:seed --class=UsersTableSeeder`：特定のシード実行
-- データベースをからにする場合 `php artisan migrate:refresh` からにしてシードを入れる場合 `php artisan migrate:refresh --seed`
+- `データベースをResetにする`: `php artisan migrate:refresh` `Reset`してシードを入れ直したい場合 `php artisan migrate:refresh --seed`
+- `migrate:reset`: Rollback all database migrations. -> The better solution `migrate:wipe` drop all tables efficiently.
+- `migrate:fresh` `Drop all tables` and `re-run all migrations`.
 - 参照 https://qiita.com/yukibe/items/f18c946105c89c37389d
 - **Migrationでカラム情報変更・消去**: カラムを変更する前に、composer.jsonファイルで`doctrine/dbal`を確実に追加する。`Doctrine DBAL`ライブラリーは`現在のカラムの状態を決め、指定されたカラムに対する修正を行うSQLクエリを生成する`ために使用される。
 - ファクトリの中のクロージャでは評価済みのファクトリーの属性配列を受け取ることもできる。
@@ -245,8 +248,51 @@ $factory->define(App\Post::class, function ($faker) {
         }
     ];
 });
-- mass assignment http://laravel.hatenablog.com/entry/2013/10/24/005050
+- `Mass assignment` http://laravel.hatenablog.com/entry/2013/10/24/005050
+- factory の `state`を使う。**特定のカラムだけ毎回同じ処理を適用する場合**に使用。
+```php
+$factory->state(App\User::class, 'address', function ($faker) {
+    return [
+        'address' => $faker->address,
+    ];
+});
+$users = factory(App\User::class, 5)->states('address')->make();
+// $users = factory(App\User::class, 5)->states('address', 'delinquent')->make(); // multiple states
 ```
+- `defineAs vs state`: `defineAs` allows to crete specific seed data in a shorthand way, while `state` allows to factory to use specific value in all seed data.
+```php
+// ---- defineAs (Might be already obsolited...)
+$factory->defineAs(User::class, 'inactive', function (Faker\Generator $faker) {
+    return [
+         'username' => $faker->userName,
+        'email' => $faker->email,
+        'name' => $faker->name,
+        'active' => 0
+    ];
+});
+// or better way is... since you've already defined User factory with active = 1.
+$factory->defineAs(User::class, 'in_active', function ($faker) use ($factory) {
+    $users = $factory->raw(User::class);
+    return array_merge($users, ['active' => 0]);
+});
+$factory->(User::class, 'in_active', 5)->create(); // create inactive 5 users 
+```
+```php
+// ---- state
+$factory->state(User::class, 'in_active', function ($faker) {
+    return [
+        'active' => 0,
+    ];
+});
+// or
+$factory->state(User::class, 'in_active', [
+    'active' => 0,
+});
+$factory->(User::class, 5)->state('in_active')->create(); // create inactive 5 users 
+```
+- [Reference](https://stackoverflow.com/questions/49979511/in-laravel-factories-what-is-the-difference-from-state-and-defineas)
+- [Good one as well - 1](https://laravel-news.com/learn-to-use-model-factories-in-laravel-5-1)
+- [Good one as well - 2](https://scotch.io/tutorials/generate-dummy-laravel-data-with-model-factories)
 ### Eloquent ORM 
 - Model作成時にマイグレーションも作成したい場合`php artisan make:model User --migration (or -m)`
 - Eloquentは更にテーブルの主キーがidというカラム名であると想定。この規約をオーバーライドする場合は、**protectedのprimaryKeyプロパティ**を定義
@@ -395,7 +441,6 @@ return Collection::times(3, function($value){
 - `union`: 指定した配列をコレクションへ追加する。既にコレクションにあるキーが、オリジナル配列に含まれている場合は、オリジナルコレクションの値が優先される。
 - `search` 値を探索して、key をリターン
 - `split` と `chunk`はcollectionを分割するという点で似ているが、`chunk`は指定した数値で分割できない場合blows up. `split`は残りは残りだけでarrayを作る。
-- 
 ### 
 - model の `$dates` プロパティにカラム名をセットしておけば、デフォルトで`Carbon`インスタンスにキャストされるため、どのそソッドでも使えるようになる。これはデータベースにはdatatimedで保存されているが、取り出し時に`Carbon`インスタンスにキャストされる。
 - `$casts`にキャストしたいカラムを指定することもできる。同様にデータベースに保存してる内容を取り出した時にキャストする。`is_admin`が`0 or 1`で保存されていて取り出した時に`false or true`へキャストされる。

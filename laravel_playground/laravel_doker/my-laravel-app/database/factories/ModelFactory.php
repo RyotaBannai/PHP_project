@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Post;
 use App\Models\Comment;
 use App\Models\Image;
+use \App\Models\Group;
 use App\Models\Tag;
 use Faker\Generator as Faker;
 use Illuminate\Support\Str;
@@ -105,6 +106,19 @@ $factory->define(Image::class, function (Faker $faker) {
             }
         },
         'filename' => $faker->firstName,
+        'created_at' => $faker->dateTime,
+        'updated_at' => $faker->dateTime,
+    ];
+});
+
+//$factory->defineAs(User::class, 'in_active', function ($faker) use ($factory) {
+//    $users = $factory->raw(User::class);
+//    return array_merge($users, ['active' => 0]);
+//});
+
+$factory->define(Group::class, function () { return []; });
+$factory->state(Group::class, 'with_rand_timestamp', function (Faker $faker) {
+    return [
         'created_at' => $faker->dateTime,
         'updated_at' => $faker->dateTime,
     ];
