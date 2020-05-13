@@ -51,9 +51,19 @@ class User extends Authenticatable
         return $this->name.': '.$this->email;
     }
 
-    // accssor $this->first_name;
+    // accessor $this->first_name;
     public function getNameAttribute($value)
     {
         return ucfirst($value);
+    }
+
+    public function groups()
+    {
+        return $this
+            ->belongsToMany(Group::class, 'user_group', 'user_id', 'group_id')
+            ->using(UserGroup::class)->withPivot(['role_id']);
+
+        // user とgroupの中間テーブルなので自動的にそのカラムは取得できるが
+        // 中間テーブルにあるその他のデータを取得したいときは withPivotで指定。
     }
 }

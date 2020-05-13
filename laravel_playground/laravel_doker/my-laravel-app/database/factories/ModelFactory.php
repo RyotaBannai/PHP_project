@@ -22,8 +22,12 @@ use Illuminate\Support\Str;
 */
 
 $factory->define(User::class, function (Faker $faker) {
+    $name_list = [
+        'Sophia', 'Isabella', 'Emma', 'Olivia', 'Ava', 'Emily', 'Abigail', 'Madison', 'Mia', 'Chloe',
+        'Jacob', 'Mason', 'William', 'Jayden', 'Noah', 'Michael','Ethan', 'Alexander', 'Aiden', 'Daniel'
+    ];
     return [
-        'name' => $faker->userName,
+        'name' => $faker->randomElement($name_list), // $faker->userName,
         'email' => $faker->unique()->safeEmail,
         'email_verified_at' => function() use ($faker){
             if($faker->boolean(70)) return $faker->dateTime;
