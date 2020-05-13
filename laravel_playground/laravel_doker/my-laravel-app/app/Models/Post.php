@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+// use Laravel\Scout\Searchable;
 use Illuminate\Support\Str;
 
 class Post extends Model
 {
+    // use Searchable;
+
     public function images()
     {
         return $this->morphMany(Image::class, 'target'); // 親はmorphの立場なのでmorph名を加えてポリモーフィックリレーションを作成

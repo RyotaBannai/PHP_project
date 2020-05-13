@@ -293,6 +293,8 @@ $factory->(User::class, 5)->state('in_active')->create(); // create inactive 5 u
 - [Reference](https://stackoverflow.com/questions/49979511/in-laravel-factories-what-is-the-difference-from-state-and-defineas)
 - [Good one as well - 1](https://laravel-news.com/learn-to-use-model-factories-in-laravel-5-1)
 - [Good one as well - 2](https://scotch.io/tutorials/generate-dummy-laravel-data-with-model-factories)
+### Laravel Create Project
+- `composer create-project laravel/laravel [Project Name] --prefer-dist`
 ### Eloquent ORM 
 - Model作成時にマイグレーションも作成したい場合`php artisan make:model User --migration (or -m)`
 - Eloquentは更にテーブルの主キーがidというカラム名であると想定。この規約をオーバーライドする場合は、**protectedのprimaryKeyプロパティ**を定義
