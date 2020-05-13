@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Post extends Model
 {
@@ -24,5 +25,10 @@ class Post extends Model
         // return $this->belongsToMany(Tag::class, post_tags); // pivot tableが別名の場合第二引数に渡す. idも違う場合は、第三、第四引数で渡す
         return $this->belongsToMany(Tag::class)->using(PostTag::class);
         // ->withPivot(‘カラム名’)で中間テーブルのカラムを取得
+    }
+
+    public function snippet()
+    {
+        return Str::words($this->content, 10, ' >>>');
     }
 }

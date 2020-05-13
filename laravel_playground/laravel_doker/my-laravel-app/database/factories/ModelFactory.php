@@ -47,7 +47,7 @@ $factory->define(Post::class, function (Faker $faker) {
             return factory(User::class)->create()->id;
             },
         'title' => $faker->realText(20),
-        'content' => $faker->sentence(10),
+        'content' => $faker->sentence(50),
         'category' => $faker->randomElement(['World', 'U.S.', 'Politics', 'Business', 'Opinion', 'Sports']),
         'created_at' => $faker->dateTime,
         'updated_at' => $faker->dateTime,
