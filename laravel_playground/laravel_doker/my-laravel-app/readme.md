@@ -261,7 +261,7 @@ $users = factory(App\User::class, 5)->states('address')->make();
 ```
 - `defineAs vs state`: `defineAs` allows to crete specific seed data in a shorthand way, while `state` allows to factory to use specific value in all seed data.
 ```php
-// ---- defineAs (Might be already obsolited...)
+// ---- defineAs (Might be already obsoleted...)
 $factory->defineAs(User::class, 'inactive', function (Faker\Generator $faker) {
     return [
          'username' => $faker->userName,
@@ -441,7 +441,26 @@ return Collection::times(3, function($value){
 - `union`: 指定した配列をコレクションへ追加する。既にコレクションにあるキーが、オリジナル配列に含まれている場合は、オリジナルコレクションの値が優先される。
 - `search` 値を探索して、key をリターン
 - `split` と `chunk`はcollectionを分割するという点で似ているが、`chunk`は指定した数値で分割できない場合blows up. `split`は残りは残りだけでarrayを作る。
-### 
+### Useful Eloquent Features
+- `push()` : save a model and its corresponding relationships.
+```php 
+$user = User::first();
+$user->name = "Peter";
+$user->phone->number = '1234567890';
+$user->push();
+```
+- `is()` model is the same or not.
+```php
+$user = App\User::find(1);
+$sameUser = App\User::find(1); 
+$user->is($sameUser);  // true 
+```
+- pass attributes to `find()`
+```php
+$user = App\User::find(1, ['name', 'age']);
+```
+- [Ref](https://medium.com/@JinoAntony/10-hidden-laravel-eloquent-features-you-may-not-know-efc8ccc58d9e)
+### キャスト
 - model の `$dates` プロパティにカラム名をセットしておけば、デフォルトで`Carbon`インスタンスにキャストされるため、どのそソッドでも使えるようになる。これはデータベースにはdatatimedで保存されているが、取り出し時に`Carbon`インスタンスにキャストされる。
 - `$casts`にキャストしたいカラムを指定することもできる。同様にデータベースに保存してる内容を取り出した時にキャストする。`is_admin`が`0 or 1`で保存されていて取り出した時に`false or true`へキャストされる。
 ```php
@@ -609,6 +628,7 @@ phpbrew init
           'App\Listeners\SendShipmentNotification',
         ],
 ```
+- イベント・リスナを個々に作成する方法。First create event by running `php artisan make:event AuctionUserWasOutbidded` You then need a listener to handle this event. Generate one with: `php artisan make:listener EmailOutbiddedUser --event=AuctionUserWasOutbidded` Use event option to bind them. Lastly, bind them in `protected $listen` in `EventServiceProvider` like `'SLOCO\Events\AuctionUserWasOutbidded' => ['SLOCO\Listeners\EmailOutbiddedUser',],`
 - `EventServiceProvider`の`boot`にロージャベースリスナを登録できる。
 - `Event Discovery` 自分でイベントとリスナを登録しなくても、laravelが（リフレクションを使い）`Listeners` ディレクトリを探索（スキャン）して解決してくれる。そして見つけ出したら、`EventServiceProvider`に自ら登録する。
 - イベントのhandleメソッドにDIしたタイプヒントを元に`Listeners`を探索。
