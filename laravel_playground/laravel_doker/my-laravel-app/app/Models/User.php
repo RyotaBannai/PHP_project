@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Carbon\Carbon;
+use App\Scopes\ActiveScope;
 
 class User extends Authenticatable
 {
@@ -12,8 +14,6 @@ class User extends Authenticatable
 
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array
      */
     protected $fillable = [
         'name',
@@ -23,8 +23,6 @@ class User extends Authenticatable
 
     /**
      * The attributes that should be hidden for arrays.
-     *
-     * @var array
      */
     protected $hidden = [
         'password',
@@ -33,18 +31,40 @@ class User extends Authenticatable
 
     /**
      * The attributes that should be cast to native types.
-     *
-     * @var array
      */
     protected $casts = [
-        'email_verified_at' => 'datetime', //  'datetime:Y-m-d' 日付のフォーマットも指定できる
-        // 'options' => 'array', // options属性 がjson形式にシリアライズされている時に、取り出し時点で自動でarray型にキャスト
-                                //options属性へ値をセットすると配列は保存のために自動的にJSONへシリアライズ
+        'email_verified_at' => 'datetime',  // 'datetime:Y-m-d' 日付のフォーマットも指定できる
+        // 'options' => 'array',            // 例えば、options属性 がjson形式にシリアライズされている時に、取り出し時点で自動でarray型にキャスト
+                                            // options属性へ値をセットすると配列は保存のために自動的にJSONへシリアライズ
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::addGlobalScope(new ActiveScope);
+        // 適用しない場合：User::select('*')->withoutGlobalScope(ActiveScope::class)->get();
+        // グローバルスコープ全部外す場合 Order::withoutGlobalScopes()->get();
+    }
+
+    // protected $appends  = ['name'];    // デフォルトでグループ名を取得
+    public function isAdmin($group_id)
+    {
+        return $this->groups->where('id', $group_id)->where('name', 'Admin')->count() > 0; // App\Models\User::find(9)->isAdmin(2)
+    }
 
     public function posts()
     {
         return $this->hasMany(Post::class);
+    }
+
+    public function groups()
+    {
+        return $this
+            ->belongsToMany(Group::class, 'user_group', 'user_id', 'group_id')
+            ->using(UserGroup::class)->withPivot(['role_id']);
+
+        // user とgroupの中間テーブルなので自動的にそのカラムは取得できるが
+        // 中間テーブルにあるその他のデータを取得したいときは withPivotで指定。
     }
 
     public function getData(){
@@ -57,13 +77,15 @@ class User extends Authenticatable
         return ucfirst($value);
     }
 
-    public function groups()
+    public function scopeSignUpSince2000($query)
     {
-        return $this
-            ->belongsToMany(Group::class, 'user_group', 'user_id', 'group_id')
-            ->using(UserGroup::class)->withPivot(['role_id']);
+        return $query->SignUpSince(2000);
+        // App\Models\User::SignUpSince2000()->get()
+    }
 
-        // user とgroupの中間テーブルなので自動的にそのカラムは取得できるが
-        // 中間テーブルにあるその他のデータを取得したいときは withPivotで指定。
+    public function scopeSignUpSince($query, $year)
+    {
+        $_year = Carbon::parse("first day of January $year");
+        return $query->where('created_at', '>=', $_year);
     }
 }

@@ -328,6 +328,7 @@ $comment->save(); // 関連づけてる親のupdate_at も更新される。
 - 中間テーブルに三つ目以降のテーブルもつけたい場合-> 中間テーブルにリレーションをつける。アクセスするときは、`pivot`経由で呼ぶ。 
 - `App\Models\User::find(1)->groups->first()->pivot->role` 例えば、あるユーザが複数のグループに所属しているとき、それらのグループでそのユーザに割り振られているロールを取得したい場合。所属するそれぞれのグループ似て単一の役割が異なるときに使う。[参照](https://qiita.com/kkznch/items/72ff650737eff863e4d9)
 - モデルメソッドもpivot経由しても使える。`App\Models\User::find(1)->groups->first()->pivot->role->upperName()`
+- scope について. [参照](https://qiita.com/henriquebremenkanp/items/e21de43e4b9079265d7f)
 ### Eloquent ORM リレーション
 - User テーブルクラスで hasOne('Models\Phone')を定義し、User::find(1)->phone;とする-> 初めにユーザーid, ここではuser_idがphone テーブルにあると仮定して、その情報を取得するリレーションを作成することができる.
 ```php
