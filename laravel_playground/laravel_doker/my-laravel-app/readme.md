@@ -784,3 +784,60 @@ throw_if(
 ```php
 $validator = validator($data, $rules, $messages);
 ```
+### 設定
+- テスト環境での設定 .env ファイル　`.env.testing` とするとPHPUnitテスト実行時（`./vendor/bin/phpunit`）やArtisanコマンドへ`--env=testing`オプションを指定した場合に、`.env`ファイルをオーバーライドする。
+- **空白を含む値**を環境変数に定義する場合は、**ダブル引用符**で囲う。
+```
+APP_NAME="My Application"
+```
+- 現在のアプリケーション環境の情報取得
+```php
+$environment = App::environment();
+```
+```php
+if (App::environment('local')) {
+    // 環境はlocal
+}
+
+if (App::environment(['local', 'staging'])) {
+    // 環境はlocalかstaging
+}
+```
+- メンテナンスモードにする。
+```shell script
+php artisan down --message="Upgrading Database" --retry=60
+```
+- メンテナンスモードから抜けるには、`up`コマンド。
+```shell script
+php artisan up
+```
+- コマンドのallowオプションを使用し、メンテナンスモードであっても、アプリケーションへアクセスを許すIPアドレスやネットワークを指定できる。
+```shell script
+php artisan down --allow=127.0.0.1 --allow=192.168.0.0/16
+```
+- 環境毎に`.env`を変える
+   - APP_ENVの値によって、`.env`ファイルを切替
+```apacheconfig
+# .htaccess
+SetEnvIf Host "production.co.jp" APP_ENV=prod # .env.prod
+SetEnvIf Host "staging.co.jp" APP_ENV=stg     # .env.stg
+SetEnvIf Host "development.co.jp" APP_ENV=dev # .env.dev
+```
+   - またはlaravel の `loadEnvironmentFrom`メソッドを使う
+```php
+$app = new Illuminate\Foundation\Application(
+    realpath(__DIR__.'/../')
+);
+switch ($_SERVER['SERVER_NAME'] ?? 'localhost') {
+    case 'development.co.jp':
+        $app->loadEnvironmentFrom('.env.dev');
+        break;
+    case 'staging.co.jp':
+        $app->loadEnvironmentFrom('.env.stg');
+        break;
+    case 'production.co.jp':
+        $app->loadEnvironmentFrom('.env.prod');
+        break;
+}
+```
+- [参照](https://qiita.com/takaday/items/b992c7d8cd69343b6626)
