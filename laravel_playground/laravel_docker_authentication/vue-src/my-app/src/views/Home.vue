@@ -17,6 +17,9 @@
 <script>
   import axios from 'axios'
   axios.defaults.withCredentials = true;
+  // This will instruct the client to include the cookies in the request.
+  // Otherwise it won't be included if the SPA is on a different subdomain.
+
   axios.defaults.baseURL = 'http://localhost:8000';
 
 export default {
