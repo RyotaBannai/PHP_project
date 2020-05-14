@@ -1,0 +1,24 @@
+# object type. this example won't fetch other data
+#type User {
+#    """Fetch User data"""
+#    id: ID!
+#    name: String!
+#    email: String!
+#}
+type User {
+    id: ID!
+    name: String!
+    email: String!
+}
+
+type Query {
+    user(id: ID! @eq): User @find
+    users: [User!]! @all
+}
+
+# Here is the query. @directive
+#type Query {
+#  user(id: ID! @eq): User @find # \App\User::where('id', $args['id'])->first();
+#  users: [User!]! @all # this query is the same as \App\User::all();
+#}
+
