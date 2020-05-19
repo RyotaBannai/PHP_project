@@ -25,6 +25,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        Gate::define('return-from-validation', 'App\Gates\AccessCopyGate@whenValidationError');
+        Gate::define('access-from-show-page', 'App\Gates\AccessCopyGate@fromCreatePage');
     }
 }

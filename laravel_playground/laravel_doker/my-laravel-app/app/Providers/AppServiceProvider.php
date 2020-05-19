@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use DB;
+use Gate;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,6 +28,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+
 //        DB::query()->macro('getOrFail', function ($columns = ['*']){
 //            $models = $this->get($columns);
 //

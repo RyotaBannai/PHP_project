@@ -34,7 +34,7 @@ public function authenticate(Request $request)
 - リダイレクタの`intended`メソッドは、認証フィルターで引っかかる前にアクセスしようとしていたURLへ、ユーザーをリダイレクト。そのリダイレクトが不可能な場合の移動先として、フォールバックURIをこのメソッドに指定.
 #### エラーメッセージをbladeに送る手法
 ##### 1つ目
-1. カスタムのエラ〜メッセージを作る用のクラス 
+1. カスタムのエラ〜メッセージを作る用のクラス
 2. 追加するエラーを変数付きで宣言
 3. withErrors で返す
 4. message を使う
@@ -51,7 +51,7 @@ $message 以外の変数を使いたいとき
 1. withErrors にkeyを渡す
 2. $errors からkeyを使う. first（'error'）はカスタムでadd したので初めに追加したerror (= **Named Error Bags**)
 ```php
-return redirect('login')->withInput($request->input())->withErrors($message_bag, 'login'); 
+return redirect('login')->withInput($request->input())->withErrors($message_bag, 'login');
 
 {{ $error->login->first('error')}}
 ```
@@ -71,11 +71,11 @@ login.blade.php
 - The other auth driver out of the box called `api`. So for example you can call your middleware like this: `$this->middleware('auth:api');` This will check that the user is authenticated by api_token instead of session. You would use this if your application has an API endpoint allowed for logged in users only. Then a user can make a request like `yourapp.com/api-method?api_token=blahblah`.
 ```php
 Auth::guest()  // is a opposit of Auth:check()
-Auth::check() 
+Auth::check()
 ```
 - 組み込みLoginControllerを使用する場合、このコントローラが使用しているトレイトにより、"remember"ユーザーを確実に処理するロジックが実装済み
 - ユーザーが`"remember me"クッキー`を使用して認証されているかを判定する
-```php 
+```php
 if (Auth::viaRemember()) { some codes }
 ```
 #### ユーザーを一度だけ認証する
@@ -84,23 +84,30 @@ if (Auth::viaRemember()) { some codes }
 if (Auth::once($credentials)) {
 }
 ```
-- `http基本認証 -> auth.basic` 
+- `http基本認証 -> auth.basic`
 ```php
 Route::get('profile', function() {
     // 認証済みのユーザーのみが入れる
 })->middleware('auth.basic');
-``` 
+```
 ####  他のデバイス上のセッションを無効化
 ```php
 use Illuminate\Support\Facades\Auth;
 Auth::logoutOtherDevices($password);
 ```
 - loginルートに対するルート名をカスタマイズしながら、AuthenticateSessionミドルウェアを使用している場合は、アプリケーションの例外ハンドラにあるunauthenticatedメソッドをオーバーライドし、ログインページへユーザーを確実にリダイレクトさせる。loginルートはデフォルトで実装されてる.
-### Policy
+### Gate and Policy
+- `Gate` :シンプルなクロージャを使ったアプローチで、`Policy` は特定のモデルやリソースに対するロジックをまとめたクラス（モデルやリソースに対する認可以外は `Gate`）または、`Gate` は認証で`Policy` は認可とも言える。
+-　`Gate` は `Policy` の **判定処理を引き受ける事ができる**
+```php
+Route::middleware('can:view,task')->get('tasks/{task}', 'TaskController@show');
+```
+- `can:view,task` の task は tasks/{task} の task が入ってくる（ /task/1 でアクセスされた場合は自動的に ID=1 の Task インスタンス）このとき `TaskPolicy::view()` が呼ばれる。TaskModelのポリシーなのでTaskPolicy. [Ref](https://qiita.com/nunulk/items/719e1d53c455946184ac)
+- [gate + roleでアクセス制限]（https://www.ritolab.com/entry/56）
 - **ポリシーの登録**: 指定したモデルに対するアクションの認可時に、どのポリシーを利用するかをLaravelへ指定すること
 - ポリシーの名前は対応するモデルの名前へ、Policyサフィックスを付けたものにする必要がある。Userモデルに対応させるには、`UserPolicy`クラスと命名.
 - `AuthServiceProvider`中で明確にマップされたポリシーは、自動検出される可能性のあるポリシーよりも優先的に扱われる。
-- ポリシーから認可レスポンスを返す場合、`Gate::allows`メソッドはシンプルな論理値を返す。しかし、ゲートから完全な認可レスポンスを取得するには、`Gate::inspect`メソッドを使用。 Gate は認証でPolicy は認可。
+- ポリシーから認可レスポンスを返す場合、`Gate::allows`メソッドはシンプルな論理値を返す。しかし、ゲートから完全な認可レスポンスを取得するには、`Gate::inspect`メソッドを使用。
 - HTTPリクエストが認証済みユーザーにより開始されたものでなければ（つまりゲストユーザーの場合）、すべてのゲートとポリシーは自動的にデフォルトとして`false`を返す。しかし、**「オプショナル」** なタイプヒントを宣言するか、ユーザーの引数宣言に`null`デフォルトバリューを指定することで、ゲートやポリシーに対する認可チェックをパスさせることができる。
 ```php
 public function update(?User $user, Post $post) // $user = null
@@ -110,13 +117,13 @@ public function update(?User $user, Post $post) // $user = null
 ```
 - 指定するモデルのポリシーが登録済みであれば適切なポリシーの`can`メソッドが自動的に呼びだされ、論理型の結果が返される。そのモデルに対するポリシーが登録されて**いない**場合、`can`メソッドは指定したアクション名に合致する、**ゲートベースのクロージャ**を呼ぶ。
 ```php
-if ($user->can('update', $post)) { 
+if ($user->can('update', $post)) {
     //
 }
 ```
 - モデルを必要としないアクションの場合は、`モデルのクラス名`を渡す。これでどのモデルのupdateのPolicyかを識別できる。
 ```php
-if ($user->can('update', Post::class)) { 
+if ($user->can('update', Post::class)) {
     //
 }
 ```
@@ -201,7 +208,7 @@ public function toMail($notifiable)
     return (new MailMessage)
         ->subject(Lang::getFromJson('登録確認メール'))
         ->markdown('emails.verifyemail', [
-            'url' => $this->verificationUrl($notifiable), 
+            'url' => $this->verificationUrl($notifiable),
             'user' => $notifiable
     ]);
 }
@@ -227,7 +234,7 @@ php artisan cache:clear
 ```php
 //config/auth.php
 'passwords' =>[
-    // 追加 
+    // 追加
     'admins' => [
                 'provider' => 'admins',
                 'table' => 'password_resets',

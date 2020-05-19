@@ -18,6 +18,8 @@ Route::any('/', function () {
     return view('welcome');
 });
 
+Route::get('/gate', 'TestGateController@index');
+
 Route::get('/util', function(MyUtil $util){ // 無名関数でサービスの呼び出し
     #return $util->getMessage(); // サービスのメソッドをコール
     return app()->make('util')->getMessage();// コンテナがインスタンスを作成
