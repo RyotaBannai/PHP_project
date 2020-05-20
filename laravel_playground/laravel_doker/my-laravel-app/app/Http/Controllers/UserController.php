@@ -88,4 +88,19 @@ class UserController extends Controller
         $user = User::find(1);
         return $user->name;
     }
+
+    public function mdw(User $user, Request $request){
+        if($request->get('is_model_instance_set')){
+            dump('model is set aready.');
+            return view('user.profile',[
+                'user' => \Session::get("user_data_$user->id")
+            ]);
+        }
+
+        // after many procedures...
+        $new_data = User::find($user->id);
+        return view('user.profile', [
+               'user' => $new_data
+           ]);
+    }
 }

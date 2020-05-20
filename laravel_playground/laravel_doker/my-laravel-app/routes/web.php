@@ -61,12 +61,17 @@ Route::prefix('file')->group(function() {
     });
 });
 
+//Route::get('users/{user}', function(User $user){
+//    return $user;
+//});
+
 Route::prefix('users')->group(function(){
     Route::get('list', 'UserController@userList');
     Route::get('form', 'UserController@userForm')->name('user.form');
     Route::post('out', 'UserController@userOut')->name('user.out');
     Route::get('/', 'UserController@index');
     Route::get('name', 'UserController@name');
+    Route::get('{user}', ['as' => 'copy.user', 'uses' => 'UserController@mdw'])->middleware('checkAccessCopy');
     Route::get('resource', function(){
         // return new UserCollection(User::all());
         return new UserCollection(User::all());

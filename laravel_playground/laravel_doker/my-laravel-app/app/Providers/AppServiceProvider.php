@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use DB;
 use Gate;
+use App\Http\Middleware;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -16,8 +17,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //handle とterminate で同じインスタンスを使いたい
-        $this->app->singleton(CheckAge::class);
+        // handle とterminate で同じインスタンスを使いたい
+        $this->app->singleton(Middleware\CheckAge::class);
+        $this->app->singleton(Middleware\CheckAccessCopy::class);
 
     }
 
@@ -38,5 +40,6 @@ class AppServiceProvider extends ServiceProvider
 //
 //            throw (new ModelNotFoundException)->setModel(get_class($this->model));
 //        });
+
     }
 }
