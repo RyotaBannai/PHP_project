@@ -28,7 +28,6 @@ class SessionController extends Controller
             return "<div class = 'red'>You don't have any session.</div>";
         }
 
-
 //        $initial = 0 ;
 //        $value = $request->session()->get($this->uid, function() use ($initial){
 //            session([$this->uid => $initial]);
@@ -38,4 +37,5 @@ class SessionController extends Controller
 //        session([$this->uid => $value+1]);
 //        return $value+1;
     }
+
 }

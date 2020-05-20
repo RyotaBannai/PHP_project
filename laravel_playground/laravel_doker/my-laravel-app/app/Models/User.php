@@ -41,7 +41,7 @@ class User extends Authenticatable
     protected static function boot()
     {
         parent::boot();
-        static::addGlobalScope(new ActiveScope);
+        // static::addGlobalScope(new ActiveScope);
         // 適用しない場合：User::select('*')->withoutGlobalScope(ActiveScope::class)->get();
         // グローバルスコープ全部外す場合 Order::withoutGlobalScopes()->get();
     }

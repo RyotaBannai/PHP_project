@@ -592,8 +592,9 @@ Route::post('/unsubscribe/{user}', function (Request $request) {
 })->name('unsubscribe')->middleware('signed');
 ```
 ### Middleware 
--  `app\Providers\RouteServiceProvider`により、`routes/web.php`ファイルでは、webミドルウェアグループが自動的に適用されている。
-- **handleとterminateメソッドの呼び出しで同一のミドルウェアインスタンスを使用したい場合**は、コンテナのsingletonメソッドを使用し、ミドルウェアを登録する。通常、`AppServiceProvider.php`のregisterメソッドの中で登録。
+-  `app\Providers\RouteServiceProvider`により、`routes/web.php`ファイルでは、`webミドルウェアグループ`が自動的に適用されている。
+- **`handle`と`terminate`メソッドの呼び出しで同一のミドルウェアインスタンスを使用したい場合**は、コンテナのsingletonメソッドを使用し、ミドルウェアを登録する。通常、`AppServiceProvider.php`のregisterメソッドの中で登録。
+- 現状だと**Middlewareの中でsessionを使ってkey valueを保存するとき**は、`Session:save()`も必要。Redisを使うときは必要なし。
 ### Two ways to test out methods
 1. make commands by hitting something like `php artisan make:command CollectionComamnd` and add this class to `Console\Kernel.php`. After that, edit `CollectionCommand@handle` to specify what actions you want trigger when hitting the command. it's always good idea to use with `clear` command like `clear && php artisan collection:example`.
 2. use shell script something like below and run it. when you want to reload scripts hit `control-D` and if you want to quit, hit `control-C`.
