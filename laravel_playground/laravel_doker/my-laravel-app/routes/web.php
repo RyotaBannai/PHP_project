@@ -68,10 +68,15 @@ Route::prefix('file')->group(function() {
 Route::prefix('users')->group(function(){
     Route::get('list', 'UserController@userList');
     Route::get('form', 'UserController@userForm')->name('user.form');
-    Route::post('out', 'UserController@userOut')->name('user.out');
+    Route::get('out', 'UserController@userOut')->name('user.out');
     Route::get('/', 'UserController@index');
     Route::get('name', 'UserController@name');
-    Route::get('{user}', ['as' => 'copy.user', 'uses' => 'UserController@mdw'])->middleware('checkAccessCopy');
+    //
+    // Route::get('{user}', ['as' => 'copy.user', 'uses' => 'UserController@mdw'])->middleware('checkAccessCopy');
+    Route::post('{user}', 'UserController@executeDupe');
+    Route::get('{user}/show', 'UserController@show');
+    Route::get('{user}/dupe', 'UserController@dupe');
+    //
     Route::get('resource', function(){
         // return new UserCollection(User::all());
         return new UserCollection(User::all());

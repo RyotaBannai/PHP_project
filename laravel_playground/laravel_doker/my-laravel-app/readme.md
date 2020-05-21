@@ -842,3 +842,5 @@ switch ($_SERVER['SERVER_NAME'] ?? 'localhost') {
 }
 ```
 - [参照](https://qiita.com/takaday/items/b992c7d8cd69343b6626)
+### Use bootstrap on laravel
+- install bootstrap `php artisan ui bootstrap` then `npm install && npm run dev`

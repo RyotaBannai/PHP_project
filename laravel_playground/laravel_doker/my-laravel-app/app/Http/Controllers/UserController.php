@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use DB;
+use Str;
 
 class UserController extends Controller
 {
@@ -55,10 +56,12 @@ class UserController extends Controller
         $data = 'data';
         return view('user.sidebar', compact('data'));
     }
+
     public function userOut(Request $req){
         $post_data= $req->all();
         return view("user.out", compact("post_data"));
     }
+
     public function userList(Request $req){
         $users = User::all();
         $id = $req->input('id') ?? null;
@@ -83,10 +86,30 @@ class UserController extends Controller
             );
         }
     }
+
     public function name()
     {
         $user = User::find(1);
         return $user->name;
+    }
+
+    public function dupe(User $user){
+        return view('user.dupe', [
+            'user' => User::find($user->id)
+        ]);
+    }
+
+    public function executeDupe(User $user){
+        $new_user = $user->replicate();
+        $new_user->email = Str::random(10).'@random.com';
+        $new_user->save();
+        return redirect('users/'.$new_user->id.'/show');
+    }
+
+    public function show(User $user){
+        return view('user.profile',[
+            'user' => $user
+        ]);
     }
 
     public function mdw(User $user, Request $request){

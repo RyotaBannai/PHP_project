@@ -43,7 +43,7 @@ class CheckAccessCopy
 
     public function handle(Request $request, Closure $next) //: Closure|Response
     {
-        if( preg_match('/.*\/users\/[0-9]*\/?/', session()->previousUrl()) ) {
+        if( preg_match('/.*\/users\/[0-9]*\/?/', session()->previousUrl()) ){
 
             $this->model_name = $this->modelName($request);
             $this->req_user_id = $request->route($this->model_name)->id;
@@ -63,6 +63,13 @@ class CheckAccessCopy
                 return $next($request);
             }
         }
+//        else if( preg_match('/.*\/users\/[0-9]*\/?/index', session()->previousUrl()) ){
+//            // some validation should come here
+//            return $next($request);
+//        }
+//        else {
+//            // should throw an exception
+//        }
         dump(3);
         return $next($request);
     }
