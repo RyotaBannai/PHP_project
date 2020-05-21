@@ -1,7 +1,7 @@
 <template>
     <div class="main">
-        <form v-bind:action="action_url" method="post">
-            <slot></slot>
+        <form v-bind:action="url" method="post">
+            <slot name="csrf-token"></slot>
             <input type="text" v-bind:value="user_id" readonly disabled>
             <input type="submit"
             class="btn btn-primary"
@@ -24,7 +24,7 @@
                 action_url: window.location.origin+'/users/'+this.user_id,
             }
         },
-        props:['user_id'],
+        props:['user_id', 'url'],
         mounted() {
             console.log('Component mounted.')
         },
